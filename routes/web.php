@@ -2,10 +2,6 @@
 
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', function () {
-    return view('welcome');
-});
+Route::get('/', function () { return view('welcome');})->name('dashboard');
 
-Route::get('/Masuk', function () {
-    return view('login');
-});
+Route::get('/login-admin', function () { return view('login');})->name('login');
