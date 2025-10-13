@@ -11,6 +11,7 @@
   <nav class="bg-white shadow-md sticky top-0 z-50">
     <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
       <div class="flex items-center space-x-2">
+        <a href="/resources/views/welcome.blade.php"></a>
         <img src="https://cdn-icons-png.flaticon.com/512/1055/1055687.png" alt="Logo" class="w-10 h-10">
         <h1 class="text-2xl font-bold text-indigo-700 hover:text-indigo-800 transition">
           Pondok Coding
