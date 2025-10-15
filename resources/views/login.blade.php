@@ -1,15 +1,17 @@
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Login | Pondok Coding</title>
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
+
 <body class="bg-gradient-to-r from-indigo-600 to-blue-500 flex items-center justify-center min-h-screen font-sans">
 
   <div class="bg-white shadow-2xl rounded-2xl p-8 w-full max-w-md">
-    
+
     <div class="flex flex-col items-center mb-6">
       <img src="https://cdn-icons-png.flaticon.com/512/1055/1055687.png" alt="Logo" class="w-16 h-16 mb-3">
       <h1 class="text-2xl font-bold text-indigo-700">Pondok Coding</h1>
@@ -42,4 +44,5 @@
   </div>
 
 </body>
+
 </html>

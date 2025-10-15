@@ -49,8 +49,7 @@
       </ul>
     </div>
   </nav>
-
-
+  <x-alert></x-alert>
   <section
     class="relative min-h-screen flex flex-col justify-center items-center text-center bg-cover bg-center bg-no-repeat text-white"
     style="background-image: url('https://wallpapers.com/images/hd/coding-2000-x-1099-picture-kf8enf13otl7uabo.jpg');">
