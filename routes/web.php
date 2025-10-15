@@ -23,4 +23,8 @@ Route::middleware(['role:admin'])->group(function(){
 
     Route::get('halaman-siswa', [SiswaController::class, 'halamanSiswa'])->name('siswa.view');
 
+    Route::post('halaman-siswa/updateSiswa/{id}', [SiswaController::class, 'siswaUpdate'])->name('siswa.update');
+
+    Route::post('halaman-siswa/deleteSiswa/{id}', [SiswaController::class, 'siswaDelete'])->name('siswa.delete');
+
 });
