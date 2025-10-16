@@ -3,17 +3,28 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
+use App\Models\User;
+use App\Models\Siswa;
+use App\Models\KaryaSiswa; // pastikan model karya siswa ada
 
 class DashboardController extends Controller
+
 {
-    public function index(){
+     public function index(){
         return view('welcome');
     }
 
-    public function adminDashboard(){
-        $admin = Auth::guard('admin')->user();
+    public function adminDashboard()
+    {
+        // Hitung total siswa dari tabel Siswa
+        $totalSiswa = Siswa::count();
 
-        return view('admindashboard', compact('admin'));
+        // Hitung total admin dari User + role admin (Spatie)
+        $totalAdmin = User::role('admin', 'web')->count();
+
+        // Hitung total karya siswa
+        $karyaSiswa = KaryaSiswa::count();
+
+        return view('admindashboard', compact('totalSiswa', 'totalAdmin', 'karyaSiswa'));
     }
 }
