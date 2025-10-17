@@ -10,6 +10,11 @@ use App\Models\KaryaSiswa; // pastikan model karya siswa ada
 class DashboardController extends Controller
 
 {
+    public function index()
+{
+    return view('welcome'); // atau view lain yang kamu mau
+}
+
      public function adminDashboard()
 {
     // Hitung total siswa dari tabel Siswa
@@ -28,7 +33,8 @@ class DashboardController extends Controller
 public function showAdmins()
 {
     $admins = \App\Models\User::role('admin')->get();
-    return view('Admin.Admin', compact('admins'));
+    return view('components.Admin.Admin', compact('admins'));
+
 }
 
 
