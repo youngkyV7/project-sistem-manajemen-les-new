@@ -30,13 +30,19 @@
             <span x-show="sidebarOpen" x-transition class="ml-3">Karya Siswa</span>
         </a>
 
-        <a href="product" class="flex items-center px-4 py-2 hover:bg-indigo-700 transition rounded-md">
-            <svg xmlns="http://www.w3.org/2000/svg" height="18" width="18" fill="white" viewBox="0 0 512 512">
-                <path
-                    d="M0 192c0-35.3 28.7-64 64-64c.5 0 1.1 0 1.6 0C73 91.5 105.3 64 144 64c15 0 29 4.1 40.9 11.2C198.2 49.6 225.1 32 256 32s57.8 17.6 71.1 43.2C339 68.1 353 64 368 64c38.7 0 71 27.5 78.4 64c.5 0 1.1 0 1.6 0c35.3 0 64 28.7 64 64c0 11.7-3.1 22.6-8.6 32L8.6 224C3.1 214.6 0 203.7 0 192z" />
-            </svg>
-            <span x-show="sidebarOpen" x-transition class="ml-3">Log Out</span>
-        </a>
+        <form method="POST" action="{{ route('logout') }}" class="mt-2">
+    @csrf
+    <button type="submit"
+        class="flex items-center w-full px-4 py-2 hover:bg-indigo-700 transition rounded-md text-left">
+        <svg xmlns="http://www.w3.org/2000/svg" height="18" width="18" fill="white" viewBox="0 0 512 512">
+            <path
+                d="M497 273L329 441c-9 9-25 9-34 0s-9-25 0-34l105-105H192c-13 0-24-11-24-24s11-24 24-24h208L295 105c-9-9-9-25 0-34s25-9 34 0l168 168c9 9 9 25 0 34zM432 64c-13 0-24-11-24-24S419 16 432 16h32c26.5 0 48 21.5 48 48v384c0 26.5-21.5 48-48 48h-32c-13 0-24-11-24-24s11-24 24-24h32V88h-32z" />
+        </svg>
+        <span x-show="sidebarOpen" x-transition class="ml-3">Log Out</span>
+    </button>
+</form>
+
+
     </nav>
 </div>
 

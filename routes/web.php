@@ -28,4 +28,7 @@ Route::middleware(['role:admin'])->group(function () {
     Route::post('halaman-siswa/deleteSiswa/{id}', [SiswaController::class, 'siswaDelete'])->name('siswa.delete');
 
     Route::post('/generate-link', [SiswaController::class, 'generateLink'])->name('generate.link');
+
+     Route::get('/admin', [DashboardController::class, 'showAdmins'])->name('admin.list');
+
 });

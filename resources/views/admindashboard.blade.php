@@ -47,6 +47,7 @@
                 </div>
                 </a>
 
+                <a href="{{ route('admin.list') }}">
                 <div class="bg-white shadow-md rounded-2xl p-6 flex items-center justify-between hover:shadow-xl transition">
                     <div>
                         <h2 class="text-gray-600 text-lg font-medium">Total Admin</h2>
@@ -62,6 +63,7 @@
                         </svg>
                     </div>
                 </div>
+                </a>
 
                 <div class="bg-white shadow-md rounded-2xl p-6 flex items-center justify-between hover:shadow-xl transition">
                     <div>
