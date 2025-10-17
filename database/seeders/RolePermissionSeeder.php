@@ -2,29 +2,49 @@
 
 namespace Database\Seeders;
 
-use App\Models\User;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use App\Models\User;
 use Spatie\Permission\Models\Role;
 
 class RolePermissionSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
     public function run(): void
     {
-        $ownerRole = Role::create([
+        $guard = 'web'; // pastikan web
+
+        // Buat role admin & siswa jika belum ada
+        $adminRole = Role::firstOrCreate([
             'name' => 'admin',
-            'guard_name' => 'guest'
+            'guard_name' => $guard,
         ]);
 
-        $user = User::create([
+        $siswaRole = Role::firstOrCreate([
+            'name' => 'siswa',
+            'guard_name' => $guard,
+        ]);
+
+        // Buat akun admin contoh
+        $admin = User::firstOrCreate([
+            'email' => 'brett@brett.com'
+        ], [
             'name' => 'Brett',
-            'email' => 'brett@brett.com',
             'password' => bcrypt('sayaBret')
         ]);
 
-        $user->assignRole($ownerRole);
+        if (!$admin->hasRole('admin')) {
+            $admin->assignRole($adminRole);
+        }
+
+        // Buat akun siswa contoh
+        $siswa = User::firstOrCreate([
+            'email' => 'siswa@example.com'
+        ], [
+            'name' => 'Siswa Contoh',
+            'password' => bcrypt('password')
+        ]);
+
+        if (!$siswa->hasRole('siswa')) {
+            $siswa->assignRole($siswaRole);
+        }
     }
 }

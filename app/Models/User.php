@@ -46,5 +46,5 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
-    protected string $guard_name = 'guest';
+    protected string $guard_name = 'web';
 }
