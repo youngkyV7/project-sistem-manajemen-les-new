@@ -13,11 +13,8 @@
     <h1 class="text-center text-5xl font-bold p-6">Formulir Pendafaran Siswa Baru</h1>
     <div class="grid grid-cols-1 md:grid-cols-2 gap-y-12 gap-x-8 p-6 text-lg">
         <div class="col-span-1 md:col-span-2">
-            <form action="{{ route('siswa.add') }}" method="POST" enctype="multipart/form-data">
+            <form action="{{ route('siswa.add', ['token' => $token]) }}" method="POST" enctype="multipart/form-data">
                 @csrf
-                @php
-                $user = Auth::user();
-                @endphp
                 <div class="grid lg:grid-cols-2 gap-6">
                     <div>
                         <label class="text-lg font-medium block mb-2">Nama</label>

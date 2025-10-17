@@ -13,11 +13,11 @@ Route::post('/login-admin/proses', [LoginController::class, 'login'])->name('log
 
 Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 
-Route::get('tambah-siswa', [SiswaController::class, 'index'])->name('siswa');
+Route::get('/tambah-siswa/{token}', [SiswaController::class, 'showForm'])->name('form.daftar');
 
-Route::post('tambah-siswa/proses', [SiswaController::class, 'siswaAdd'])->name('siswa.add');
+Route::post('tambah-siswa/{token}', [SiswaController::class, 'siswaAdd'])->name('siswa.add');
 
-Route::middleware(['role:admin'])->group(function(){
+Route::middleware(['role:admin'])->group(function () {
 
     Route::get('admindashboard', [DashboardController::class, 'adminDashboard'])->name('admindashboard');
 
@@ -27,4 +27,5 @@ Route::middleware(['role:admin'])->group(function(){
 
     Route::post('halaman-siswa/deleteSiswa/{id}', [SiswaController::class, 'siswaDelete'])->name('siswa.delete');
 
+    Route::post('/generate-link', [SiswaController::class, 'generateLink'])->name('generate.link');
 });

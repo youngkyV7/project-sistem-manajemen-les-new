@@ -3,15 +3,15 @@
 namespace App\Http\Controllers;
 
 use App\Models\Siswa;
+use App\Models\Token;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
+
 
 class SiswaController extends Controller
 {
-    public function index()
-    {
-        return view('formsiswa');
-    }
-
     public function halamanSiswa()
     {
         $siswas = Siswa::all();
@@ -19,8 +19,51 @@ class SiswaController extends Controller
         return view('halamansiswa', compact('siswas'));
     }
 
-    public function siswaAdd(Request $request)
+    public function showForm($token)
     {
+        $link = Token::where('token', $token)->first();
+
+        if (!$link || $link->is_used) {
+            return redirect()->route('dashboard')->withErrors('Link tidak valid atau sudah digunakan.');
+        }
+
+        return view('formsiswa', compact('token'));
+    }
+
+
+    public function generateLink(Request $request)
+    {
+        $request->validate([
+            'password' => 'required',
+        ]);
+
+        $user = Auth::user();
+
+        if (!Hash::check($request->password, $user->password)) {
+            return back()->withErrors('Password salah!');
+        }
+
+        $token = Str::random(40);
+
+        $tokens = new Token();
+        $tokens->token = $token;
+        $tokens->is_used = false;
+
+        if ($tokens->save()) {
+            $link = route('form.daftar', ['token' => $token]);
+
+            return back()->with('success', 'Link berhasil dibuat: ' . $link);
+        }
+    }
+
+    public function siswaAdd(Request $request, $token)
+    {
+        $link = Token::where('token', $token)->first();
+
+        if (!$link || $link->is_used) {
+            return redirect()->route('dashboard')->withErrors('Link tidak valid atau sudah digunakan.');
+        }
+
         $request->validate([
             'nama_siswa' => 'required|string|max:100',
             'no_hp' => 'required|string|max:15',
@@ -42,6 +85,8 @@ class SiswaController extends Controller
         $siswa->kota = $request->kota;
 
         if ($siswa->save()) {
+            $link->is_used = true;
+            $link->save();
             return redirect()->route('dashboard')->with('success', 'Pendaftaran Siswa Baru Berhasil');
         } else {
             return back()->withErrors('Anda Gagal Mendaftar');
