@@ -3,15 +3,47 @@
 namespace App\Http\Controllers;
 
 use App\Models\Siswa;
+use App\Models\Token;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
+use App\Models\KaryaSiswa;
+
 
 class SiswaController extends Controller
 {
-    public function index()
-    {
-        return view('formsiswa');
+    public function storeKarya(Request $request, $id)
+{
+    $request->validate([
+        'judul' => 'required|string|max:255',
+        'deskripsi' => 'nullable|string',
+        'gambar' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+    ]);
+
+    $siswa = Siswa::findOrFail($id);
+
+    if ($request->hasFile('gambar')) {
+        $path = $request->file('gambar')->store('karya_images', 'public');
     }
 
+    KaryaSiswa::create([
+        'judul' => $request->judul,
+        'deskripsi' => $request->deskripsi,
+        'gambar' => $path,
+        'siswa_id' => $siswa->id,
+    ]);
+
+    return redirect()->route('siswa.uploadkarya', $siswa->id)
+                     ->with('success', 'Karya berhasil diupload!');
+}
+
+    public function uploadKarya($id)
+    {
+        $siswa = Siswa::findOrFail($id);
+        $karyas = KaryaSiswa::where('siswa_id', $id)->get();
+        return view('uploadkarya', compact('siswa', 'karyas'));
+    }
     public function halamanSiswa()
     {
         $siswas = Siswa::all();
@@ -19,19 +51,67 @@ class SiswaController extends Controller
         return view('halamansiswa', compact('siswas'));
     }
 
-    public function siswaAdd(Request $request)
+    public function showForm($token)
     {
+        $link = Token::where('token', $token)->first();
+
+        if (!$link || $link->is_used) {
+            return redirect()->route('dashboard')->withErrors('Link tidak valid atau sudah digunakan.');
+        }
+
+        return view('formsiswa', compact('token'));
+    }
+
+
+    public function generateLink(Request $request)
+    {
+        $request->validate([
+            'password' => 'required',
+        ]);
+
+        $user = Auth::user();
+
+        if (!Hash::check($request->password, $user->password)) {
+            return back()->withErrors('Password salah!');
+        }
+
+        $token = Str::random(40);
+
+        $tokens = new Token();
+        $tokens->token = $token;
+        $tokens->is_used = false;
+
+        if ($tokens->save()) {
+            $link = route('form.daftar', ['token' => $token]);
+
+            return back()->with('success', 'Link berhasil dibuat: ' . $link);
+        }
+    }
+
+    public function siswaAdd(Request $request, $token)
+    {
+        $link = Token::where('token', $token)->first();
+
+        if (!$link || $link->is_used) {
+            return redirect()->route('dashboard')->withErrors('Link tidak valid atau sudah digunakan.');
+        }
+
         $request->validate([
             'nama_siswa' => 'required|string|max:100',
             'no_hp' => 'required|string|max:15',
             'pendidikan' => 'required|string|max:15',
             'alamat' => 'required|string|max:200',
             'kota' => 'required|string|max:50',
+            'foto_siswa' =>'nullable|image|mimes:jpg,jpeg,png|max:2048',
         ]);
 
         $jumlah_siswa = Siswa::count() + 1;
         $tahun_bulan = date('Ym');
         $id_siswa = $tahun_bulan . str_pad($jumlah_siswa, 4, '0', STR_PAD_LEFT);
+
+        if ($request->hasFile('foto_siswa')) {
+            $gambarPath = $request->file('foto_siswa')->store('siswa_images', 'public');
+        }
 
         $siswa = new Siswa();
         $siswa->nama_siswa = $request->nama_siswa;
@@ -40,8 +120,11 @@ class SiswaController extends Controller
         $siswa->pendidikan = $request->pendidikan;
         $siswa->alamat = $request->alamat;
         $siswa->kota = $request->kota;
+        $siswa->foto_siswa = $gambarPath;
 
         if ($siswa->save()) {
+            $link->is_used = true;
+            $link->save();
             return redirect()->route('dashboard')->with('success', 'Pendaftaran Siswa Baru Berhasil');
         } else {
             return back()->withErrors('Anda Gagal Mendaftar');
@@ -56,7 +139,12 @@ class SiswaController extends Controller
             'pendidikan' => 'required|string|max:15',
             'alamat' => 'required|string|max:200',
             'kota' => 'required|string|max:50',
+            'foto_siswa' =>'nullable|image|mimes:jpg,jpeg,png|max:2048',
         ]);
+
+        if ($request->hasFile('foto_siswa')) {
+            $gambarPath = $request->file('foto_siswa')->store('siswa_images', 'public');
+        }
 
         $siswa = Siswa::findOrFail($id);
         $siswa->nama_siswa = $request->nama_siswa;
@@ -64,6 +152,7 @@ class SiswaController extends Controller
         $siswa->pendidikan = $request->pendidikan;
         $siswa->alamat = $request->alamat;
         $siswa->kota = $request->kota;
+        $siswa->foto_siswa = $gambarPath;
 
         if ($siswa->save()) {
             return redirect()->route('siswa.view')->with('success', 'Data Siswa Berhasil Diupdate');
