@@ -114,8 +114,28 @@
                             </svg>
                     </div>
                 </div>
+                
+                <a href="{{ route('laporan.index') }}">
+                <div class="bg-white shadow-md rounded-2xl p-6 flex items-center justify-between hover:shadow-xl transition">
+                    <div>
+                        <h2 class="text-gray-600 text-lg font-medium">Pelaporan</h2>
+                        <p class="text-4xl font-extrabold text-indigo-600 mt-2">
+                            {{ $totalSiswa ?? 0 }}
+                        </p>
+                    </div>
+                    <div class="bg-indigo-100 p-4 rounded-full">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 text-indigo-600"
+                            fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2a3 3 0 00-5.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2a3 3 0 015.356-1.857M7 20v-2a3 3 0 00-5.356-1.857M7 20h10" />
+                        </svg>
+                    </div>
+                </div>
+                </a>
             </div>
+            
         </div>
+        
     </div>
 
 </body>
