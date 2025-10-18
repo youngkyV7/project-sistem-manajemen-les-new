@@ -6,7 +6,7 @@ use Closure;
 use Illuminate\Contracts\View\View;
 use Illuminate\View\Component;
 
-class siswa.create extends Component
+class siswa_create extends Component
 {
     /**
      * Create a new component instance.
