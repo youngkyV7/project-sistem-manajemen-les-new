@@ -13,6 +13,10 @@ return new class extends Migration
     {
         Schema::create('laporan_hasil_belajar', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('siswa_id')->constrained('siswas')->onDelete('cascade');
+            $table->date('tanggal');
+            $table->enum('hasil', ['Sangat Baik', 'Baik', 'Cukup', 'Kurang']);
+            $table->text('catatan')->nullable();
             $table->timestamps();
         });
     }
