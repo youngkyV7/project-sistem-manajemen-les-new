@@ -4,11 +4,24 @@ namespace App\Models;
 
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Spatie\Permission\Traits\HasRoles;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 
-class Siswa extends Authenticatable
+class Siswa extends Model
 {
-    use HasRoles;
+    use HasFactory;
 
-    protected $guard_name = 'siswa';
-    protected $fillable = ['name', 'email', 'password'];
+    // Nama tabel
+    protected $table = 'siswas';
+
+    // Kolom yang bisa diisi
+    protected $fillable = [
+        'nama_siswa',
+        'id_siswa',
+        'no_hp',
+        'kota',
+        'alamat',
+        'pendidikan'
+    ];
+
 }
