@@ -40,12 +40,15 @@ Route::middleware(['role:admin'])->group(function () {
     Route::get('/admin', [DashboardController::class, 'showAdmins'])->name('admin.list');
 
     Route::get('/siswa/{id}/uploadkarya', [KaryaController::class, 'index'])->name('siswa.uploadkarya');
+    
+    Route::get('/siswa/karya/{id}', [KaryaController::class, 'lihatkarya'])->name('siswa.lihatkarya');
 
-    Route::get('siswa/{id}/uploadkarya', [KaryaController::class, 'lihatkarya'])->name('siswa.lihatkarya');
     
     Route::post('/siswa/{id}/uploadkarya', [KaryaController::class, 'store'])->name('siswa.karya.store');
 
     Route::get('/siswa/karya/{id}/edit', [KaryaController::class, 'edit'])->name('siswa.karya.edit');
+
+    Route::put('/siswa/karya/{id}', [KaryaController::class, 'update'])->name('siswa.karya.update');
 
     Route::delete('/siswa/karya/{id}', [KaryaController::class, 'destroy'])->name('siswa.karya.destroy');
 
