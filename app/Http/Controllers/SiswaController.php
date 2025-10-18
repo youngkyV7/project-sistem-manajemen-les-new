@@ -8,10 +8,42 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
+use App\Models\KaryaSiswa;
 
 
 class SiswaController extends Controller
 {
+    public function storeKarya(Request $request, $id)
+{
+    $request->validate([
+        'judul' => 'required|string|max:255',
+        'deskripsi' => 'nullable|string',
+        'gambar' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+    ]);
+
+    $siswa = Siswa::findOrFail($id);
+
+    if ($request->hasFile('gambar')) {
+        $path = $request->file('gambar')->store('karya_images', 'public');
+    }
+
+    KaryaSiswa::create([
+        'judul' => $request->judul,
+        'deskripsi' => $request->deskripsi,
+        'gambar' => $path,
+        'siswa_id' => $siswa->id,
+    ]);
+
+    return redirect()->route('siswa.uploadkarya', $siswa->id)
+                     ->with('success', 'Karya berhasil diupload!');
+}
+
+    public function uploadKarya($id)
+    {
+        $siswa = Siswa::findOrFail($id);
+        $karyas = KaryaSiswa::where('siswa_id', $id)->get();
+        return view('uploadkarya', compact('siswa', 'karyas'));
+    }
     public function halamanSiswa()
     {
         $siswas = Siswa::all();
@@ -70,11 +102,16 @@ class SiswaController extends Controller
             'pendidikan' => 'required|string|max:15',
             'alamat' => 'required|string|max:200',
             'kota' => 'required|string|max:50',
+            'foto_siswa' =>'nullable|image|mimes:jpg,jpeg,png|max:2048',
         ]);
 
         $jumlah_siswa = Siswa::count() + 1;
         $tahun_bulan = date('Ym');
         $id_siswa = $tahun_bulan . str_pad($jumlah_siswa, 4, '0', STR_PAD_LEFT);
+
+        if ($request->hasFile('foto_siswa')) {
+            $gambarPath = $request->file('foto_siswa')->store('siswa_images', 'public');
+        }
 
         $siswa = new Siswa();
         $siswa->nama_siswa = $request->nama_siswa;
@@ -83,6 +120,7 @@ class SiswaController extends Controller
         $siswa->pendidikan = $request->pendidikan;
         $siswa->alamat = $request->alamat;
         $siswa->kota = $request->kota;
+        $siswa->foto_siswa = $gambarPath;
 
         if ($siswa->save()) {
             $link->is_used = true;
@@ -101,7 +139,12 @@ class SiswaController extends Controller
             'pendidikan' => 'required|string|max:15',
             'alamat' => 'required|string|max:200',
             'kota' => 'required|string|max:50',
+            'foto_siswa' =>'nullable|image|mimes:jpg,jpeg,png|max:2048',
         ]);
+
+        if ($request->hasFile('foto_siswa')) {
+            $gambarPath = $request->file('foto_siswa')->store('siswa_images', 'public');
+        }
 
         $siswa = Siswa::findOrFail($id);
         $siswa->nama_siswa = $request->nama_siswa;
@@ -109,6 +152,7 @@ class SiswaController extends Controller
         $siswa->pendidikan = $request->pendidikan;
         $siswa->alamat = $request->alamat;
         $siswa->kota = $request->kota;
+        $siswa->foto_siswa = $gambarPath;
 
         if ($siswa->save()) {
             return redirect()->route('siswa.view')->with('success', 'Data Siswa Berhasil Diupdate');

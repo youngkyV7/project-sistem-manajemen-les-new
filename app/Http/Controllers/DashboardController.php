@@ -10,6 +10,9 @@ use App\Models\KaryaSiswa; // pastikan model karya siswa ada
 class DashboardController extends Controller
 
 {
+    public function index(){
+        return view('welcome');
+    }
      public function adminDashboard()
 {
     // Hitung total siswa dari tabel Siswa

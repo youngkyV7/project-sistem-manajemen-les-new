@@ -1,9 +1,17 @@
 <?php
 
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\KaryaController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\SiswaController;
 use Illuminate\Support\Facades\Route;
+
+Route::get('/siswa/{id}/upload-karya', [SiswaController::class, 'uploadKarya'])
+    ->name('siswa.uploadkarya');
+
+    Route::post('/siswa/{id}/upload-karya', [SiswaController::class, 'storeKarya'])
+    ->name('siswa.storekarya');
+
 
 Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
 
@@ -29,6 +37,18 @@ Route::middleware(['role:admin'])->group(function () {
 
     Route::post('/generate-link', [SiswaController::class, 'generateLink'])->name('generate.link');
 
-     Route::get('/admin', [DashboardController::class, 'showAdmins'])->name('admin.list');
+    Route::get('/admin', [DashboardController::class, 'showAdmins'])->name('admin.list');
+
+    Route::get('/siswa/{id}/uploadkarya', [KaryaController::class, 'index'])->name('siswa.uploadkarya');
+
+    Route::get('siswa/{id}/uploadkarya', [KaryaController::class, 'lihatkarya'])->name('siswa.lihatkarya');
+    
+    Route::post('/siswa/{id}/uploadkarya', [KaryaController::class, 'store'])->name('siswa.karya.store');
+
+    Route::get('/siswa/karya/{id}/edit', [KaryaController::class, 'edit'])->name('siswa.karya.edit');
+
+    Route::delete('/siswa/karya/{id}', [KaryaController::class, 'destroy'])->name('siswa.karya.destroy');
+
+    Route::get('/admin', [DashboardController::class, 'showAdmins'])->name('admin.list');
 
 });

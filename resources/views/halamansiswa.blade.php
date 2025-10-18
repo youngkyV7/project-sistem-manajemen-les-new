@@ -10,7 +10,7 @@
 </head>
 
 <body class="bg-gray-50">
-    <div>
+<div>
         @if (session('success'))
         <div
             x-data="{ show: true }"
@@ -89,6 +89,8 @@
                     <td class="px-4 py-2">{{ $siswa->kota }}</td>
                     <td class="px-4 py-2 text-center">
                         <div class="flex justify-center space-x-4">
+
+                            <!-- Tombol Edit -->
                             <div x-data="{ editsiswa : false }">
                                 <button @click="editsiswa = true"
                                     class="flex items-center text-blue-500 hover:text-blue-600 transition">
@@ -106,6 +108,22 @@
                                 <x-siswa.update :siswa="$siswa"></x-siswa.update>
                             </div>
 
+                            <!-- Tombol Upload Karya -->
+                            <a href="{{ route('siswa.uploadkarya', $siswa->id) }}"
+                                class="flex items-center text-green-600 hover:text-green-700 transition">
+                                <svg xmlns="http://www.w3.org/2000/svg"
+                                    class="w-5 h-5 mr-1"
+                                    fill="none" viewBox="0 0 24 24"
+                                    stroke="currentColor">
+                                    <path stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                        stroke-width="2"
+                                        d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2m-4-4l-4-4m0 0l-4 4m4-4v12" />
+                                </svg>
+                                <span>Upload</span>
+                            </a>
+
+                            <!-- Tombol Delete -->
                             <div x-data="{ deletesiswa : false }">
                                 <button @click="deletesiswa = true"
                                     class="flex items-center text-red-500 hover:text-red-600 transition">
