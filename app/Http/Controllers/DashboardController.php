@@ -31,7 +31,7 @@ class DashboardController extends Controller
 public function showAdmins()
 {
     $admins = \App\Models\User::role('admin')->get();
-    return view('Admin.Admin', compact('admins'));
+    return view('components/Admin.Admin', compact('admins'));
 }
 
 
