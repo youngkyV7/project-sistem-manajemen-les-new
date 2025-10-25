@@ -30,11 +30,11 @@
             <span x-show="sidebarOpen" x-transition class="ml-3">Buat Tambah Siswa</span>
         </a>
 
-        <a href="" class="flex items-center px-4 py-2 hover:bg-indigo-700 transition rounded-md">
+        <a href="{{ route('laporan.index') }}" class="flex items-center px-4 py-2 hover:bg-indigo-700 transition rounded-md">
             <svg xmlns="http://www.w3.org/2000/svg" height="18" width="18" fill="white" viewBox="0 0 640 640"><!--!Font Awesome Free v7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.-->
-                <path d="M480 576L192 576C139 576 96 533 96 480L96 160C96 107 139 64 192 64L496 64C522.5 64 544 85.5 544 112L544 400C544 420.9 530.6 438.7 512 445.3L512 512C529.7 512 544 526.3 544 544C544 561.7 529.7 576 512 576L480 576zM192 448C174.3 448 160 462.3 160 480C160 497.7 174.3 512 192 512L448 512L448 448L192 448zM224 216C224 229.3 234.7 240 248 240L424 240C437.3 240 448 229.3 448 216C448 202.7 437.3 192 424 192L248 192C234.7 192 224 202.7 224 216zM248 288C234.7 288 224 298.7 224 312C224 325.3 234.7 336 248 336L424 336C437.3 336 448 325.3 448 312C448 298.7 437.3 288 424 288L248 288z" />
+                <path d="M192 64C156.7 64 128 92.7 128 128L128 544C128 555.5 134.2 566.2 144.2 571.8C154.2 577.4 166.5 577.3 176.4 571.4L320 485.3L463.5 571.4C473.4 577.3 485.7 577.5 495.7 571.8C505.7 566.1 512 555.5 512 544L512 128C512 92.7 483.3 64 448 64L192 64z" />
             </svg>
-            <span x-show="sidebarOpen" x-transition class="ml-3">Karya Siswa</span>
+            <span x-show="sidebarOpen" x-transition class="ml-3">Pelaporan</span>
         </a>
 
         <form method="POST" action="{{ route('logout') }}" class="mt-2">
