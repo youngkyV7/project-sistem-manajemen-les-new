@@ -15,7 +15,7 @@
         <h1 class="text-center text-4xl font-bold mb-8 text-indigo-700">Formulir Pendaftaran Siswa Baru</h1>
         <form action="{{ route('siswa.add', ['token' => $token]) }}" method="POST" enctype="multipart/form-data">
             @csrf
-            @php $user = Auth::user(); @endphp
+           
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <!-- Nama -->
