@@ -12,25 +12,23 @@
 <body class="bg-gray-50">
 <div>
         @if (session('success'))
-        <div
-            x-data="{ show: true }"
-            x-show="show"
-            x-transition
-            class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mb-4"
-            role="alert">
-            <strong class="font-bold">Sukses! </strong>
-            <span class="block sm:inline">{{ session('success') }}</span>
-            <button
-                @click="show = false"
-                class="absolute top-0 bottom-0 right-0 px-4 py-3 text-green-700">
-                <svg class="fill-current h-6 w-6" role="button" xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 20 20">
-                    <title>Close</title>
-                    <path d="M14.348 5.652a1 1 0 0 0-1.414 0L10 8.586 7.066 5.652a1 1 0 1 0-1.414 1.414L8.586 10l-2.934 2.934a1 1 0 1 0 1.414 1.414L10 11.414l2.934 2.934a1 1 0 0 0 1.414-1.414L11.414 10l2.934-2.934a1 1 0 0 0 0-1.414z" />
-                </svg>
-            </button>
+    <div class="bg-green-100 text-green-800 p-6 rounded-lg shadow text-center mb-6">
+        <h2 class="text-2xl font-bold mb-2">✅ {{ session('success') }}</h2>
+        <p class="mb-4">Scan QR Code di bawah ini untuk membuka form pendaftaran siswa.</p>
+
+        {{-- 🌀 QR Code SVG langsung dari session --}}
+        <div class="flex justify-center mb-2">
+            {!! session('qrCode') !!}
         </div>
-        @endif
+
+        {{-- 🔗 Link teks --}}
+        <a href="{{ session('link') }}" target="_blank" class="text-blue-600 underline">
+            {{ session('link') }}
+        </a>
+    </div>
+@endif
+
+
         @if ($errors->any())
         <div
             x-data="{ show: true }"

@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 use App\Models\KaryaSiswa;
-
+use SimpleSoftwareIO\QrCode\Facades\QrCode;
 
 class SiswaController extends Controller
 {
@@ -64,29 +64,101 @@ class SiswaController extends Controller
 
 
     public function generateLink(Request $request)
-    {
-        $request->validate([
-            'password' => 'required',
-        ]);
+{
+    $request->validate([
+        'token' => 'required|string|max:50',
+        'password' => 'required',
+        'gambar' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+    ]);
 
-        $user = Auth::user();
+    $user = Auth::user();
 
-        if (!Hash::check($request->password, $user->password)) {
-            return back()->withErrors('Password salah!');
-        }
-
-        $token = Str::random(40);
-
-        $tokens = new Token();
-        $tokens->token = $token;
-        $tokens->is_used = false;
-
-        if ($tokens->save()) {
-            $link = route('form.daftar', ['token' => $token]);
-
-            return back()->with('success', 'Link berhasil dibuat: ' . $link);
-        }
+    // 🔒 Cek password
+    if (!Hash::check($request->password, $user->password)) {
+        return back()->withErrors('Password salah!');
     }
+
+    // 📦 Ambil token dari input
+    $tokenInput = $request->token;
+
+    // Pastikan token belum digunakan
+    if (Token::where('token', $tokenInput)->exists()) {
+        return back()->withErrors('Token sudah digunakan, silakan gunakan token lain.');
+    }
+
+    // 💾 Simpan token ke database
+    $token = new Token();
+    $token->token = $tokenInput;
+    $token->is_used = false;
+    $token->save();
+
+    // 🔗 Buat link tujuan form
+    $link = route('form.daftar', ['token' => $tokenInput]);
+
+    // 🌀 Generate QR Code dalam format PNG (bukan SVG)
+$qr = \QrCode::format('png')
+    ->size(300)
+    ->margin(2)
+    ->errorCorrection('H')
+    ->generate($link);
+
+// Simpan QR sementara ke file agar bisa digabungkan
+$tempQrPath = storage_path('app/public/temp_qr.png');
+file_put_contents($tempQrPath, $qr);
+
+// Jika tidak ada logo, tampilkan langsung
+if (!$request->hasFile('gambar')) {
+    $qrBase64 = 'data:image/png;base64,' . base64_encode($qr);
+    return back()->with([
+        'success' => 'Link berhasil dibuat!',
+        'link' => $link,
+        'qrCode' => "<img src='{$qrBase64}' class='mx-auto'>"
+    ]);
+}
+
+// 📷 Jika ada logo, gabungkan
+$gambar = $request->file('gambar');
+$gambarPath = $gambar->store('qr_logo', 'public');
+$logoPath = storage_path('app/public/' . $gambarPath);
+
+$qrImage = imagecreatefrompng($tempQrPath);
+$logo = imagecreatefromstring(file_get_contents($logoPath));
+
+$qrWidth = imagesx($qrImage);
+$qrHeight = imagesy($qrImage);
+$logoWidth = imagesx($logo);
+$logoHeight = imagesy($logo);
+
+// Skala logo jadi 20% lebar QR
+$logoQRWidth = $qrWidth * 0.2;
+$scale = $logoQRWidth / $logoWidth;
+$logoQRHeight = $logoHeight * $scale;
+
+$dstX = ($qrWidth - $logoQRWidth) / 2;
+$dstY = ($qrHeight - $logoQRHeight) / 2;
+
+$qrWithLogo = imagecreatetruecolor($qrWidth, $qrHeight);
+imagecopyresampled($qrWithLogo, $qrImage, 0, 0, 0, 0, $qrWidth, $qrHeight, $qrWidth, $qrHeight);
+imagecopyresampled($qrWithLogo, $logo, $dstX, $dstY, 0, 0, $logoQRWidth, $logoQRHeight, $logoWidth, $logoHeight);
+
+// Output jadi base64
+ob_start();
+imagepng($qrWithLogo);
+$qrFinal = ob_get_clean();
+
+imagedestroy($qrImage);
+imagedestroy($logo);
+imagedestroy($qrWithLogo);
+
+$qrBase64 = 'data:image/png;base64,' . base64_encode($qrFinal);
+
+return back()->with([
+    'success' => 'Link berhasil dibuat!',
+    'link' => $link,
+    'qrCode' => "<img src='{$qrBase64}' class='mx-auto'>"
+]);
+
+}
 
     public function siswaAdd(Request $request, $token)
     {

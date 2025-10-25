@@ -16,6 +16,32 @@ class KaryaController extends Controller
         return view('uploadkarya', compact('siswa', 'karyas'));
     }
 
+    public function update(Request $request, $id)
+{
+    $karya = KaryaSiswa::findOrFail($id);
+
+    $request->validate([
+        'judul' => 'required|string|max:255',
+        'link_demo' => 'required|url',
+        'link_repo' => 'required|url',
+        'gambar' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+    ]);
+
+    if ($request->hasFile('gambar')) {
+        $gambarPath = $request->file('gambar')->store('karya_images', 'public');
+        $karya->gambar = $gambarPath;
+    }
+
+    $karya->judul = $request->judul;
+    $karya->link_demo = $request->link_demo;
+    $karya->link_repo = $request->link_repo;
+    $karya->save();
+
+    return redirect()->route('siswa.uploadkarya', $karya->siswa_id)
+                     ->with('success', 'Karya berhasil diupdate!');
+}
+
+
     public function store(Request $request, $id)
     {
         $request->validate([
