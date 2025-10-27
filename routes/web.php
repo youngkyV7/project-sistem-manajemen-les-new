@@ -6,7 +6,12 @@ use App\Http\Controllers\LoginController;
 use App\Http\Controllers\SiswaController;
 use App\Http\Controllers\LaporanController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\QrCodeController;
+use App\Http\Controllers\AbsensiController;
 
+Route::get('/qrcode/{token}', [QrCodeController::class, 'show'])->name('qrcode.show');
+
+Route::get('/generate-qrcode', [QrCodeController::class, 'generate']);
 // 🏠 Dashboard Utama
 Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
 
@@ -18,16 +23,13 @@ Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 // 👨‍🎓 Tambah Siswa (halaman pendaftaran siswa baru)
 Route::get('tambah-siswa', [SiswaController::class, 'index'])->name('siswa');
 
-// 🧩 Alternatif rute pendaftaran siswa menggunakan token unik
-Route::get('/tambah-siswa/{token}', [SiswaController::class, 'showForm'])->name('form.daftar');
-Route::post('/tambah-siswa/{token}', [SiswaController::class, 'siswaAdd'])->name('siswa.add');
 
-// 📤 Upload karya siswa
-Route::get('/siswa/{id}/upload-karya', [SiswaController::class, 'uploadKarya'])->name('siswa.uploadkarya');
-Route::post('/siswa/{id}/upload-karya', [SiswaController::class, 'storeKarya'])->name('siswa.storekarya');
 
 // 🛡️ Semua route di bawah hanya bisa diakses oleh role "admin"
 Route::middleware(['role:admin'])->group(function () {
+
+    Route::get('/tambah-siswa/{token}', [SiswaController::class, 'showForm'])->name('form.daftar');
+    Route::post('/tambah-siswa/{token}', [SiswaController::class, 'siswaAdd'])->name('siswa.add');
 
     // 🧭 Dashboard Admin
     Route::get('admindashboard', [DashboardController::class, 'adminDashboard'])->name('admindashboard');
@@ -40,6 +42,18 @@ Route::middleware(['role:admin'])->group(function () {
     // 🔗 Generate link pendaftaran
     Route::post('/generate-link', [SiswaController::class, 'generateLink'])->name('generate.link');
 
+     Route::get('/buattambahsiswa', function () {
+        return view('buattambahsiswa');
+    })->name('siswa.create');
+
+    Route::get('/konversiqrcode', function () {
+        return view('konversiqrcode');
+    })->name('admin.qrcode');
+
+    Route::get('/qrcode/download/{filename}', [QrCodeController::class, 'download'])->name('download.qrcode');
+
+    Route::post('/generate-qrcode', [QrCodeController::class, 'generate'])->name('generate.qrcode');
+
     // 👩‍💼 Manajemen Admin
     Route::get('/admin', [DashboardController::class, 'showAdmins'])->name('admin.list');
 
@@ -48,6 +62,7 @@ Route::middleware(['role:admin'])->group(function () {
     Route::get('/siswa/{id}/lihatkarya', [KaryaController::class, 'lihatkarya'])->name('siswa.lihatkarya');
     Route::post('/siswa/{id}/uploadkarya', [KaryaController::class, 'store'])->name('siswa.karya.store');
     Route::get('/siswa/karya/{id}/edit', [KaryaController::class, 'edit'])->name('siswa.karya.edit');
+    Route::put('/siswa/karya/{id}', [KaryaController::class, 'update'])->name('siswa.karya.update');
     Route::delete('/siswa/karya/{id}', [KaryaController::class, 'destroy'])->name('siswa.karya.destroy');
 
     // 📑 Fitur Laporan Harian Siswa
@@ -55,4 +70,13 @@ Route::middleware(['role:admin'])->group(function () {
     Route::get('laporan/tambah', [LaporanController::class, 'create'])->name('laporan.create');  // form tambah laporan
     Route::post('laporan/simpan', [LaporanController::class, 'store'])->name('laporan.store');   // simpan laporan ke DB
     Route::get('laporan/pdf/{id}', [LaporanController::class, 'exportPdf'])->name('laporan.pdf');// export ke PDF
+
+    Route::get('/absensi', [AbsensiController::class, 'index'])->name('absensi.index');
+    Route::post('/absensi/verify', [AbsensiController::class, 'verify'])->name('absensi.verify');
+    Route::get('/absensi/list', [AbsensiController::class, 'list'])->name('absensi.list');
+
 });
+
+
+
+

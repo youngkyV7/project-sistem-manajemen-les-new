@@ -25,10 +25,10 @@ class RolePermissionSeeder extends Seeder
 
         // Buat akun admin contoh
         $admin = User::firstOrCreate([
-            'email' => 'eko@gmail.com'
+            'email' => 'admin@gmail.com'
         ], [
-            'name' => 'eko',
-            'password' => bcrypt('eko')
+            'name' => 'admin',
+            'password' => bcrypt('admin')
         ]);
 
         if (!$admin->hasRole('admin')) {

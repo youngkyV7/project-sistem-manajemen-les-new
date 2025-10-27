@@ -70,7 +70,7 @@
                                 <td class="p-3 border-b border-blue-400/20">{{ $siswa->kota }}</td>
                                 <td class="p-3 border-b border-blue-400/20 text-center">
                                     @if($siswa->foto_siswa)
-                                        <img src="{{ asset('storage/' . $siswa->foto_siswa) }}"
+                                        <img src="{{ asset('storage/siswa_images' . $siswa->foto_siswa) }}"
                                              alt="Foto {{ $siswa->nama_siswa }}"
                                              class="w-12 h-12 rounded-full object-cover mx-auto border border-blue-400/50 shadow">
                                     @else
