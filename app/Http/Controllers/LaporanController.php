@@ -14,8 +14,8 @@ class LaporanController extends Controller
      */
     public function index()
     {
-        $laporans = LaporanHasilBelajar::with('siswa')->latest()->get();
-        return view('laporan.index', compact('laporans'));
+        $totallaporan = LaporanHasilBelajar::with('siswa')->latest()->get();
+        return view('laporan.index', compact('totallaporan'));
     }
 
     /**

@@ -8,9 +8,9 @@ return new class extends Migration
 {
     public function up(): void
     {
-        // Schema::table('karya_siswa', function (Blueprint $table) {
-        //     $table->dropColumn('link_repo'); // hapus kolom link_repo
-        // });
+        Schema::table('karya_siswa', function (Blueprint $table) {
+            $table->dropColumn('link_repo'); // hapus kolom link_repo
+        });
     }
 
     public function down(): void

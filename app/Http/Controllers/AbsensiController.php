@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use App\Models\Absensi;
-use App\Models\Siswa; // pastikan ada model Siswa
+use App\Models\Siswa;
 use Carbon\Carbon;
 
 class AbsensiController extends Controller
@@ -19,15 +19,13 @@ class AbsensiController extends Controller
     public function verify(Request $request)
     {
         try {
-            // ✅ Tidak perlu login
             if (!$request->has('image')) {
                 return response()->json([
                     'status' => 'error',
-                    'message' => 'Gambar tidak ditemukan dalam request.'
+                    'message' => 'Gambar tidak ditemukan.'
                 ], 400);
             }
 
-            // Kirim ke Flask untuk dikenali
             $flaskUrl = "http://127.0.0.1:5000/verify";
             $response = Http::timeout(15)->post($flaskUrl, [
                 'image' => $request->input('image')
@@ -44,19 +42,19 @@ class AbsensiController extends Controller
 
             if ($data['status'] === 'success') {
                 $recognizedName = trim($data['name']);
+
                 $siswa = Siswa::whereRaw('LOWER(nama_siswa) = ?', [strtolower($recognizedName)])->first();
 
                 if (!$siswa) {
                     return response()->json([
                         'status' => 'error',
-                        'message' => "Wajah dikenali sebagai {$recognizedName}, tetapi siswa tidak ditemukan di database."
+                        'message' => "Wajah dikenali sebagai {$recognizedName}, tetapi siswa tidak ditemukan."
                     ]);
                 }
 
                 $today = Carbon::today();
 
-                // Cek apakah siswa sudah absen hari ini
-                $sudahAbsen = Absensi::where('nama', $siswa->nama_siswa)
+                $sudahAbsen = Absensi::where('siswa_id', $siswa->id)
                     ->whereDate('tanggal', $today)
                     ->exists();
 
@@ -68,9 +66,8 @@ class AbsensiController extends Controller
                     ]);
                 }
 
-                // Simpan absensi baru
                 Absensi::create([
-                    'user_id' => $siswa->id ?? null, // jika ada relasi ke tabel siswa
+                    'siswa_id' => $siswa->id,
                     'nama' => $siswa->nama_siswa,
                     'status' => 'Hadir',
                     'tanggal' => now(),
@@ -88,21 +85,23 @@ class AbsensiController extends Controller
                 'status' => 'error',
                 'message' => $data['message'] ?? 'Wajah tidak dikenali.'
             ]);
+
         } catch (\Exception $e) {
-            Log::error("❌ Error di AbsensiController@verify: " . $e->getMessage());
+            Log::error("Error AbsensiController@verify: " . $e->getMessage());
             return response()->json([
                 'status' => 'error',
                 'message' => 'Terjadi kesalahan: ' . $e->getMessage()
             ], 500);
         }
     }
-     public function list(Request $request)
+
+    public function list(Request $request)
     {
-        $query = Absensi::with('user');
+        $query = Absensi::with('siswa');
 
         if ($request->filled('q')) {
-            $query->whereHas('user', function ($q) use ($request) {
-                $q->where('name', 'like', '%' . $request->q . '%');
+            $query->whereHas('siswa', function ($q) use ($request) {
+                $q->where('nama_siswa', 'like', '%' . $request->q . '%');
             });
         }
 
@@ -115,6 +114,19 @@ class AbsensiController extends Controller
         }
 
         $absensis = $query->orderBy('tanggal', 'desc')->paginate(10);
+
         return view('listabsensi', compact('absensis'));
     }
+    public function hapus($id)
+{
+    try {
+        $absen = Absensi::findOrFail($id);
+        $absen->delete();
+
+        return redirect()->route('absensi.list')->with('success', 'Absensi berhasil dihapus. Siswa bisa absen kembali.');
+    } catch (\Exception $e) {
+        return redirect()->route('absensi.list')->with('error', 'Gagal menghapus absensi: ' . $e->getMessage());
+    }
+}
+
 }

@@ -151,8 +151,13 @@ class SiswaController extends Controller
         $tahun_bulan = date('Ym');
         $id_siswa = $tahun_bulan . str_pad($jumlah_siswa, 4, '0', STR_PAD_LEFT);
 
+        $gambarPath = null;
+
         if ($request->hasFile('foto_siswa')) {
-            $gambarPath = $request->file('foto_siswa')->store('siswa_images', 'public');
+            $file = $request->file('foto_siswa');
+            // 🔤 Nama file sesuai nama siswa, huruf kecil dan spasi jadi tanda strip
+            $namaFile = Str::slug($request->nama_siswa) . '.' . $file->getClientOriginalExtension();
+            $gambarPath = $file->storeAs('siswa_images', $namaFile, 'public');
         }
 
         $siswa = new Siswa();
@@ -173,6 +178,7 @@ class SiswaController extends Controller
         }
     }
 
+
     public function siswaUpdate(Request $request, $id)
     {
         $request->validate([
@@ -187,10 +193,14 @@ class SiswaController extends Controller
         $siswa = Siswa::findOrFail($id);
 
         if ($request->hasFile('foto_siswa')) {
+            // Hapus foto lama
             if ($siswa->foto_siswa && Storage::disk('public')->exists($siswa->foto_siswa)) {
                 Storage::disk('public')->delete($siswa->foto_siswa);
             }
-            $gambarPath = $request->file('foto_siswa')->store('siswa_images', 'public');
+
+            $file = $request->file('foto_siswa');
+            $namaFile = Str::slug($request->nama_siswa) . '.' . $file->getClientOriginalExtension();
+            $gambarPath = $file->storeAs('siswa_images', $namaFile, 'public');
             $siswa->foto_siswa = $gambarPath;
         }
 
@@ -206,6 +216,7 @@ class SiswaController extends Controller
             return back()->withErrors('Gagal Mengupdate Data Siswa');
         }
     }
+
 
     public function siswaDelete($id)
     {

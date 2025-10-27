@@ -74,6 +74,8 @@ Route::middleware(['role:admin'])->group(function () {
     Route::get('/absensi', [AbsensiController::class, 'index'])->name('absensi.index');
     Route::post('/absensi/verify', [AbsensiController::class, 'verify'])->name('absensi.verify');
     Route::get('/absensi/list', [AbsensiController::class, 'list'])->name('absensi.list');
+    Route::delete('/absensi/{id}/delete', [AbsensiController::class, 'hapus'])->name('absensi.delete');
+
 
 });
 

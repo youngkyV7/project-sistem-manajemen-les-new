@@ -85,7 +85,7 @@
                     <div>
                         <h2 class="text-gray-600 text-lg font-medium">Pelaporan</h2>
                         <p class="text-4xl font-extrabold text-indigo-600 mt-2">
-                            {{ $totalSiswa ?? 0 }}
+                            {{ $totallaporan ?? 0 }}
                         </p>
                     </div>
                     <div class="bg-indigo-100 p-4 rounded-full">
@@ -102,7 +102,7 @@
                     <div>
                         <h2 class="text-gray-600 text-lg font-medium">Absensi</h2>
                         <p class="text-4xl font-extrabold text-indigo-600 mt-2">
-                            {{ $totalSiswa ?? 0 }}
+                            {{ $totalAbsensi ?? 0 }}
                         </p>
                     </div>
                     <div class="bg-indigo-100 p-4 rounded-full">

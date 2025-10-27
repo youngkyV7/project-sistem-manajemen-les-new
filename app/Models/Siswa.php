@@ -20,4 +20,10 @@ class Siswa extends Model
         'kota',
         'foto_siswa',
     ];
+
+    // ✅ Relasi ke tabel absensis
+    public function absensis()
+    {
+        return $this->hasMany(Absensi::class, 'siswa_id');
+    }
 }
