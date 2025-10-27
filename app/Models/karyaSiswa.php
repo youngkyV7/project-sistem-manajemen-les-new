@@ -2,19 +2,22 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class KaryaSiswa extends Model
 {
+    use HasFactory;
+
     protected $table = 'karya_siswa';
 
     protected $fillable = [
-        'siswa_id',
         'judul',
+        'kategori',
         'deskripsi',
         'gambar',
+        'siswa_id',
         'link_demo',
-        'link_repo',
         'view',
     ];
 

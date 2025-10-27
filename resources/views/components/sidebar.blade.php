@@ -30,6 +30,14 @@
             <span x-show="sidebarOpen" x-transition class="ml-3">Buat Tambah Siswa</span>
         </a>
 
+        <a href="{{ route('admin.qrcode') }}" class="flex items-center px-4 py-2 hover:bg-indigo-700 transition rounded-md">
+            <svg xmlns="http://www.w3.org/2000/svg" height="18" width="18" fill="white" viewBox="0 0 448 512">
+                <path d="M0 32C0 14.3 14.3 0 32 0H192C209.7 0 224 14.3 224 32V192C224 209.7 209.7 224 192 224H32C14.3 224 0 209.7 0 192V32zM64 64V160H160V64H64zM32 288H192C209.7 288 224 302.3 224 320V480C224 497.7 209.7 512 192 512H32C14.3 512 0 497.7 0 480V320C0 302.3 14.3 288 32 288zM64 352V448H160V352H64zM256 32C256 14.3 270.3 0 288 0H448C465.7 0 480 14.3 480 32V192C480 209.7 465.7 224 448 224H288C270.3 224 256 209.7 256 192V32zM320 64V160H416V64H320zM320 288H352V352H416V384H352V448H416V512H288V480H320V288zM288 288H320V480H288V288z"/>
+            </svg>
+            <span x-show="sidebarOpen" x-transition class="ml-3">Konversi QRCode</span>
+        </a>
+
+
         <a href="{{ route('laporan.index') }}" class="flex items-center px-4 py-2 hover:bg-indigo-700 transition rounded-md">
             <svg xmlns="http://www.w3.org/2000/svg" height="18" width="18" fill="white" viewBox="0 0 640 640"><!--!Font Awesome Free v7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.-->
                 <path d="M192 64C156.7 64 128 92.7 128 128L128 544C128 555.5 134.2 566.2 144.2 571.8C154.2 577.4 166.5 577.3 176.4 571.4L320 485.3L463.5 571.4C473.4 577.3 485.7 577.5 495.7 571.8C505.7 566.1 512 555.5 512 544L512 128C512 92.7 483.3 64 448 64L192 64z" />

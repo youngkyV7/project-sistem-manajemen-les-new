@@ -14,37 +14,7 @@ use SimpleSoftwareIO\QrCode\Facades\QrCode;
 
 class SiswaController extends Controller
 {
-    public function storeKarya(Request $request, $id)
-    {
-        $request->validate([
-            'judul' => 'required|string|max:255',
-            'deskripsi' => 'nullable|string',
-            'gambar' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
-        ]);
 
-        $siswa = Siswa::findOrFail($id);
-
-        if ($request->hasFile('gambar')) {
-            $path = $request->file('gambar')->store('karya_images', 'public');
-        }
-
-        KaryaSiswa::create([
-            'judul' => $request->judul,
-            'deskripsi' => $request->deskripsi,
-            'gambar' => $path,
-            'siswa_id' => $siswa->id,
-        ]);
-
-        return redirect()->route('siswa.uploadkarya', $siswa->id)
-            ->with('success', 'Karya berhasil diupload!');
-    }
-
-    public function uploadKarya($id)
-    {
-        $siswa = Siswa::findOrFail($id);
-        $karyas = KaryaSiswa::where('siswa_id', $id)->get();
-        return view('uploadkarya', compact('siswa', 'karyas'));
-    }
     public function halamanSiswa()
     {
         $siswas = Siswa::all();
