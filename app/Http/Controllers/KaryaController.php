@@ -10,13 +10,22 @@ use Illuminate\Support\Facades\Storage;
 class KaryaController extends Controller
 {
     /**
-     * Tampilkan halaman daftar karya berdasarkan siswa.
+     * Tampilkan halaman daftar karya berdasarkan siswa di admin.
      */
     public function index($id)
     {
         $siswa = Siswa::findOrFail($id);
         $karyas = KaryaSiswa::where('siswa_id', $id)->get();
         return view('uploadkarya', compact('siswa', 'karyas'));
+    }
+    /**
+     * Tampilkan halaman daftar karya berdasarkan siswa di publik.
+     */
+    public function indexbebas($id)
+    {
+        $siswa = Siswa::findOrFail($id);
+        $karyas = KaryaSiswa::where('siswa_id', $id)->get();
+        return view('channelsiswa', compact('siswa', 'karyas'));
     }
 
     /**

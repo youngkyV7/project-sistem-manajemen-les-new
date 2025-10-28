@@ -23,6 +23,12 @@ Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 // 👨‍🎓 Tambah Siswa (halaman pendaftaran siswa baru)
 Route::get('tambah-siswa', [SiswaController::class, 'index'])->name('siswa');
 
+// 🧭 Dashboard Siswa
+Route::get('/dashboard/siswa', [DashboardController::class, 'siswaDashboard'])->name('siswa.dashboard');
+
+// 🎨 Manajemen Karya Siswa
+Route::get('/siswa/{id}/lihatkarya', [KaryaController::class, 'lihatkarya'])->name('siswa.lihatkarya');
+Route::get('/siswa/{id}/channelsiswa', [KaryaController::class, 'indexbebas'])->name('siswa.channelsiswa');
 
 
 // 🛡️ Semua route di bawah hanya bisa diakses oleh role "admin"
@@ -59,7 +65,8 @@ Route::middleware(['role:admin'])->group(function () {
 
     // 🎨 Manajemen Karya Siswa
     Route::get('/siswa/{id}/uploadkarya', [KaryaController::class, 'index'])->name('siswa.uploadkarya');
-    Route::get('/siswa/{id}/lihatkarya', [KaryaController::class, 'lihatkarya'])->name('siswa.lihatkarya');
+    
+    // 🎨 Manajemen CRUD Karya Siswa
     Route::post('/siswa/{id}/uploadkarya', [KaryaController::class, 'store'])->name('siswa.karya.store');
     Route::get('/siswa/karya/{id}/edit', [KaryaController::class, 'edit'])->name('siswa.karya.edit');
     Route::put('/siswa/karya/{id}', [KaryaController::class, 'update'])->name('siswa.karya.update');

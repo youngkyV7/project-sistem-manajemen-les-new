@@ -74,7 +74,7 @@
         dengan pendekatan yang praktis dan menyenangkan.
       </p>
       <a
-        href="#"
+        href="{{ route('siswa.dashboard') }}"
         class="text-lg inline-block bg-white text-indigo-700 font-semibold px-8 py-4 rounded-full shadow-lg hover:bg-indigo-100 transition">
         Lihat Hasil Karya
       </a>
@@ -102,19 +102,19 @@
       <h2 class="text-4xl font-bold text-indigo-700 mb-10">Hasil Karya</h2>
       <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
         <div class="bg-white shadow-md rounded-lg p-4 hover:shadow-xl transition">
-          <img src="https://cdn.dribbble.com/users/3477896/screenshots/11155461/media/09e7e2e3e22f1b5d6a93f2f23c5c3f2f.png" alt="Project 1" class="rounded mb-4">
-          <h3 class="text-xl font-semibold mb-2">Website E-Commerce</h3>
-          <p class="text-gray-600">Dibangun dengan Laravel dan Tailwind CSS, menampilkan sistem belanja online sederhana namun elegan.</p>
+          <img src="https://i.pinimg.com/1200x/2e/43/db/2e43db2a9cde8c24b2de617b257c69cc.jpg" alt="Project 1" class="rounded mb-4">
+          <h3 class="text-xl font-semibold mb-2">Game Roblox</h3>
+          <p class="text-gray-600">Dunia imajinasi tanpa batas! Game ini mengajak pemain menjelajah dunia virtual penuh tantangan dan kreativitas khas Roblox.</p>
         </div>
         <div class="bg-white shadow-md rounded-lg p-4 hover:shadow-xl transition">
-          <img src="https://cdn.dribbble.com/users/387277/screenshots/15107088/media/55cf96a913ea6a5c73d35fdcb5e6bfe5.png" alt="Project 2" class="rounded mb-4">
-          <h3 class="text-xl font-semibold mb-2">Aplikasi Mobile TodoList</h3>
-          <p class="text-gray-600">Aplikasi untuk mencatat tugas harian, dibuat dengan Flutter dan Firebase.</p>
+          <img src="https://i.pinimg.com/736x/dd/23/71/dd2371905b1bfced3440fd2a50d4e3e5.jpg" alt="Project 2" class="rounded mb-4">
+          <h3 class="text-xl font-semibold mb-2">Game Scratch</h3>
+          <p class="text-gray-600">Petualangan interaktif seru dengan visual lucu dan logika pemrograman sederhana — karya inovatif dari kreator muda berbakat!</p>
         </div>
         <div class="bg-white shadow-md rounded-lg p-4 hover:shadow-xl transition">
-          <img src="https://cdn.dribbble.com/users/2382015/screenshots/5915378/media/0b4035f3c9a77e8c9b12e0cfd98b3b0f.png" alt="Project 3" class="rounded mb-4">
-          <h3 class="text-xl font-semibold mb-2">Game Edukasi Anak</h3>
-          <p class="text-gray-600">Game berbasis Unity untuk membantu anak-anak belajar sambil bermain.</p>
+          <img src="https://i.pinimg.com/736x/6b/7e/83/6b7e83587a2eec3443ba488216cddb95.jpg" alt="Project 3" class="rounded mb-4">
+          <h3 class="text-xl font-semibold mb-2">Project Code</h3>
+          <p class="text-gray-600">Proyek coding inovatif yang menggabungkan logika, desain, dan kreativitas — menjadikan belajar pemrograman terasa menyenangkan!</p>
         </div>
       </div>
     </div>

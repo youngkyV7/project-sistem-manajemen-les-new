@@ -76,7 +76,7 @@
                                 class="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded text-sm font-semibold">Lihat</a>
 
                             <a href="{{ route('siswa.karya.edit', $karya->id) }}"
-                                class="bg-yellow-500 hover:bg-yellow-600 px-4 py-2 rounded text-sm font-semibold">Update</a>
+                                class="bg-green-500 hover:bg-green-600 px-4 py-2 rounded text-sm font-semibold">Update</a>
 
                             <button onclick="showDeleteModal({{ $karya->id }}, '{{ $karya->nama_karya }}')"
                                 class="bg-red-600 hover:bg-red-700 px-4 py-2 rounded text-sm font-semibold">
