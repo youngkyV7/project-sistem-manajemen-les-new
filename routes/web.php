@@ -69,7 +69,7 @@ Route::middleware(['role:admin'])->group(function () {
 
     // 🎨 Manajemen Karya Siswa
     Route::get('/siswa/{id}/uploadkarya', [KaryaController::class, 'index'])->name('siswa.uploadkarya');
-    
+
     // 🎨 Manajemen CRUD Karya Siswa
     Route::post('/siswa/{id}/uploadkarya', [KaryaController::class, 'store'])->name('siswa.karya.store');
     Route::get('/siswa/karya/{id}/edit', [KaryaController::class, 'edit'])->name('siswa.karya.edit');

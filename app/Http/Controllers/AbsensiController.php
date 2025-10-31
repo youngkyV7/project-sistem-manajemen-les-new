@@ -129,4 +129,19 @@ class AbsensiController extends Controller
     }
 }
 
+public function getData()
+{
+    $today = now()->toDateString();
+
+    $absenHariIni = Absensi::whereDate('tanggal', $today)->pluck('siswa_id')->toArray();
+
+    $siswaBelumAbsen = Siswa::whereNotIn('id', $absenHariIni)->get(['id', 'nama_siswa']);
+    $siswaSudahAbsen = Siswa::whereIn('id', $absenHariIni)->get(['id', 'nama_siswa']);
+
+    return response()->json([
+        'belum_absen' => $siswaBelumAbsen,
+        'sudah_absen' => $siswaSudahAbsen,
+    ]);
+}
+
 }
