@@ -19,6 +19,10 @@ class KaryaSiswa extends Model
         'siswa_id',
         'link_demo',
         'view',
+        'is_delete',
+    ];
+    protected $casts = [
+        'is_delete' => 'boolean',
     ];
 
     public function siswa()

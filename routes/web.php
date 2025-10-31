@@ -42,8 +42,12 @@ Route::middleware(['role:admin'])->group(function () {
 
     // 📋 Manajemen Data Siswa
     Route::get('halaman-siswa', [SiswaController::class, 'halamanSiswa'])->name('siswa.view');
+    Route::get('halaman-karya-siswa', [SiswaController::class, 'halamanKaryaSiswa'])->name('halamankaryasiswa.view');
     Route::post('halaman-siswa/updateSiswa/{id}', [SiswaController::class, 'siswaUpdate'])->name('siswa.update');
     Route::post('halaman-siswa/deleteSiswa/{id}', [SiswaController::class, 'siswaDelete'])->name('siswa.delete');
+    Route::get('/siswa/sampah', [SiswaController::class, 'siswaSampah'])->name('siswa.sampah');
+    Route::post('halaman-siswa/restoreSiswa/{id}', [SiswaController::class, 'siswaRestore'])->name('siswa.restore');
+
 
     // 🔗 Generate link pendaftaran
     Route::post('/generate-link', [SiswaController::class, 'generateLink'])->name('generate.link');
@@ -69,8 +73,11 @@ Route::middleware(['role:admin'])->group(function () {
     // 🎨 Manajemen CRUD Karya Siswa
     Route::post('/siswa/{id}/uploadkarya', [KaryaController::class, 'store'])->name('siswa.karya.store');
     Route::get('/siswa/karya/{id}/edit', [KaryaController::class, 'edit'])->name('siswa.karya.edit');
-    Route::put('/siswa/karya/{id}', [KaryaController::class, 'update'])->name('siswa.karya.update');
-    Route::delete('/siswa/karya/{id}', [KaryaController::class, 'destroy'])->name('siswa.karya.destroy');
+    Route::put('/siswa/karya/{id}/put', [KaryaController::class, 'update'])->name('siswa.karya.update');
+    Route::delete('/siswa/karya/{id}/delete', [KaryaController::class, 'destroy'])->name('siswa.karya.destroy');
+    Route::post('/siswa/karya/{id}/restore', [KaryaController::class, 'restore'])->name('siswa.karya.restore');
+    Route::get('/karya/sampah', [KaryaController::class, 'sampah'])->name('siswa.karya.sampah');
+
 
     // 📑 Fitur Laporan Harian Siswa
     Route::get('laporan', [LaporanController::class, 'index'])->name('laporan.index');          // menampilkan daftar laporan
@@ -83,6 +90,10 @@ Route::middleware(['role:admin'])->group(function () {
     Route::get('/absensi/list', [AbsensiController::class, 'list'])->name('absensi.list');
     Route::delete('/absensi/{id}/delete', [AbsensiController::class, 'hapus'])->name('absensi.delete');
 
+    //recycle bin
+    Route::get('/recyclebin', function () {
+    return view('recyclebin');
+    })->name('recyclebin');
 
 });
 

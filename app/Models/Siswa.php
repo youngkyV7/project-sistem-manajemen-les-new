@@ -16,9 +16,15 @@ class Siswa extends Model
         'nama_siswa',
         'no_hp',
         'pendidikan',
+        'kelas',
         'alamat',
         'kota',
         'foto_siswa',
+        'is_delete',
+    ];
+
+    protected $casts = [
+        'is_delete' => 'boolean',
     ];
 
     // ✅ Relasi ke tabel absensis

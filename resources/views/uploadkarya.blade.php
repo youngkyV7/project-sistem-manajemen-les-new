@@ -13,7 +13,7 @@
 
     <!-- Header -->
     <div class="w-full bg-indigo-700 px-10 py-7 shadow-md flex justify-between items-center">
-        <a href="{{ route('siswa.view') }}" class="text-white text-xl font-semibold hover:text-gray-200 transition">
+        <a href="{{ route('halamankaryasiswa.view') }}" class="text-white text-xl font-semibold hover:text-gray-200 transition">
             ← Kembali
         </a>
         <h1 class="text-3xl font-bold text-white tracking-wide">Manajemen Karya Siswa</h1>
@@ -225,7 +225,7 @@
 
         document.getElementById('confirmDeleteBtn').addEventListener('click', () => {
             if (selectedKaryaId) {
-                fetch(`/siswa/karya/${selectedKaryaId}`, {
+                fetch(`/siswa/karya/${selectedKaryaId}/delete`, {
                     method: 'DELETE',
                     headers: {
                         'X-CSRF-TOKEN': '{{ csrf_token() }}',

@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Daftar Siswa</title>
+    <title>Karya Siswa</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 </head>
@@ -16,7 +16,7 @@
         <x-alert></x-alert>
 
         <div class="flex justify-between items-center px-6 mb-4">
-            <h1 class="text-3xl font-bold text-indigo-700">Daftar Siswa</h1>
+            <h1 class="text-3xl font-bold text-indigo-700">Karya Siswa</h1>
 
             <!-- Search Bar -->
             <div class="relative">
@@ -78,40 +78,23 @@
 
                             <!-- Aksi -->
                             <td class="px-4 py-3 text-center">
-                                <div class="flex justify-center space-x-4">
+                                <div class="flex justify-center">
 
-                                    <!-- Tombol Edit -->
-                                    <div x-data="{ editsiswa : false }">
-                                        <button @click="editsiswa = true"
-                                            class="flex items-center text-blue-500 hover:text-blue-600 transition">
-                                            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 mr-1"
-                                                fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <!-- Tombol Lihat -->
+                                    <a href="{{ route('siswa.uploadkarya', $siswa->id) }}"
+                                        class="flex items-center text-green-600 hover:text-green-700 transition font-medium">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 mr-1" fill="none"
+                                            viewBox="0 0 24 24" stroke="currentColor">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                    d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 
-                                                    2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                                                d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7
+                                                -1.274 4.057-5.064 7-9.542 7 -4.477 0-8.268-2.943-9.542-7z" />
                                             </svg>
-                                            <span>Edit</span>
-                                        </button>
-                                        <x-siswa.update :siswa="$siswa"></x-siswa.update>
-                                    </div>
+                                        <span>Lihat</span>
+                                    </a>
 
-                                    <!-- Tombol Delete -->
-                                    <div x-data="{ deletesiswa : false }">
-                                        <button @click="deletesiswa = true"
-                                            class="flex items-center text-red-500 hover:text-red-600 transition">
-                                            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 mr-1"
-                                                fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                    d="M19 7l-.867 12.142A2 2 0 0116.138 
-                                                    21H7.862a2 2 0 01-1.995-1.858L5 
-                                                    7m5 4v6m4-6v6m1-10V4a1 1 
-                                                    0 00-1-1h-4a1 1 0 00-1 
-                                                    1v3M4 7h16" />
-                                            </svg>
-                                            <span>Delete</span>
-                                        </button>
-                                        <x-siswa.delete :siswa="$siswa"></x-siswa.delete>
-                                    </div>
+
                                 </div>
                             </td>
                         </tr>

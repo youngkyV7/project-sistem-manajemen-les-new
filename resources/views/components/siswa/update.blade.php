@@ -1,7 +1,7 @@
 @props(['siswa'])
 
 <div x-show="editsiswa" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-    <div class="bg-white rounded-2xl shadow-lg p-6 w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+    <div class="bg-white rounded-2xl shadow-lg p-6 w-full max-w-3xl max-h-[90vh] overflow-y-auto">
         <!-- Tombol Tutup -->
         <div class="flex justify-end">
             <button @click="editsiswa = false" class="text-gray-500 hover:text-red-500">
@@ -18,104 +18,129 @@
             </button>
         </div>
 
-        <!-- Form Edit -->
-        <form method="POST" action="{{ route('siswa.update', $siswa->id) }}" enctype="multipart/form-data" class="space-y-5">
+        <h2 class="text-center text-3xl font-bold mb-6 text-indigo-700">Edit Data Siswa</h2>
+
+        <form method="POST" action="{{ route('siswa.update', $siswa->id) }}" enctype="multipart/form-data" class="space-y-6">
             @csrf
-            <h3 class="text-2xl font-bold text-indigo-700 text-center mb-4">Edit Data Siswa</h3>
 
-            <!-- Upload / Gambar -->
-            <div x-data="{
-                    productImage: [],
-                    removeFileImage(index) { this.productImage.splice(index, 1); }
-                }"
-                class="w-full border-2 border-gray-300 rounded-lg p-4 relative bg-gray-50">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Nama -->
+                <div>
+                    <label class="block text-lg font-medium mb-2">Nama Siswa</label>
+                    <input type="text" name="nama_siswa" value="{{ $siswa->nama_siswa }}"
+                        class="w-full px-4 py-2.5 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:outline-none" />
+                </div>
 
-                <input name="foto_siswa" type="file" accept="image/*"
-                    class="absolute inset-0 opacity-0 cursor-pointer z-50"
-                    @change="productImage = Array.from($event.target.files)">
+                <!-- No HP -->
+                <div>
+                    <label class="block text-lg font-medium mb-2">No. Telepon <span class="text-gray-500">(WhatsApp)</span></label>
+                    <input type="text" name="no_hp" value="{{ $siswa->no_hp }}"
+                        class="w-full px-4 py-2.5 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:outline-none" />
+                </div>
 
-                <!-- Preview jika upload baru -->
-                <template x-if="productImage.length > 0">
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
-                        <template x-for="(file, index) in productImage" :key="index">
-                            <div class="relative border rounded-lg overflow-hidden">
-                                <img :src="URL.createObjectURL(file)" class="w-full h-40 object-cover">
-                                <button type="button"
-                                    @click="removeFileImage(index)"
-                                    class="absolute top-1 right-1 bg-red-600 text-white rounded-full p-1 text-xs hover:bg-red-700">
-                                    &times;
-                                </button>
-                                <p class="text-xs mt-1 text-center text-gray-600 truncate" x-text="file.name"></p>
-                            </div>
-                        </template>
-                    </div>
-                </template>
+                <!-- Kota -->
+                <div>
+                    <label class="block text-lg font-medium mb-2">Kota</label>
+                    <input type="text" name="kota" value="{{ $siswa->kota }}"
+                        class="w-full px-4 py-2.5 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:outline-none" />
+                </div>
 
-                <!-- Tampilkan foto lama jika belum upload -->
-                <template x-if="productImage.length === 0">
-                    <div class="flex flex-col items-center justify-center py-4 text-gray-600">
-                        @if($siswa->foto_siswa)
-                            <img src="{{ asset('storage/' . $siswa->foto_siswa) }}"
-                                alt="Foto Siswa Lama"
-                                class="w-48 h-40 object-cover rounded-lg border mb-2 shadow">
-                            <p class="text-sm text-gray-500">Foto saat ini</p>
-                        @else
-                            <p class="text-sm text-gray-400 italic">Belum ada foto siswa</p>
-                        @endif
-                    </div>
-                </template>
-            </div>
+                <!-- Alamat -->
+                <div>
+                    <label class="block text-lg font-medium mb-2">Alamat</label>
+                    <input type="text" name="alamat" value="{{ $siswa->alamat }}"
+                        class="w-full px-4 py-2.5 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:outline-none" />
+                </div>
 
-            <!-- Nama -->
-            <div>
-                <label class="block text-sm font-semibold text-gray-700 mb-1">Nama Siswa</label>
-                <input type="text" name="nama_siswa" value="{{ $siswa->nama_siswa }}"
-                    class="w-full border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-indigo-500 focus:outline-none">
-            </div>
-
-            <!-- No HP -->
-            <div>
-                <label class="block text-sm font-semibold text-gray-700 mb-1">No. HP</label>
-                <input type="text" name="no_hp" value="{{ $siswa->no_hp }}"
-                    class="w-full border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-indigo-500 focus:outline-none">
-            </div>
-
-            <!-- Kategori -->
-            <div>
-                <label class="block text-sm font-semibold text-gray-700 mb-1">Kategori</label>
-                <div class="relative">
-                    <select name="pendidikan"
-                        class="w-full border border-gray-300 rounded-lg py-2 pl-3 pr-8 text-gray-900 focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                <!-- Tingkat Pendidikan -->
+                <div>
+                    <label class="block text-lg font-medium mb-2">Tingkat Pendidikan</label>
+                    <select id="pendidikan" name="pendidikan"
+                        class="w-full px-4 py-2.5 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+                        onchange="updateKelasOptions()">
                         <option value="">Pilih Tingkat Pendidikan</option>
-                        <option value="TK" {{ $siswa->pendidikan == 'TK' ? 'selected' : '' }}>TK</option>
                         <option value="SD" {{ $siswa->pendidikan == 'SD' ? 'selected' : '' }}>SD</option>
                         <option value="SMP" {{ $siswa->pendidikan == 'SMP' ? 'selected' : '' }}>SMP</option>
                         <option value="SMA" {{ $siswa->pendidikan == 'SMA' ? 'selected' : '' }}>SMA</option>
-                        <option value="S1" {{ $siswa->pendidikan == 'S1' ? 'selected' : '' }}>S1</option>
+                        <option value="SMK" {{ $siswa->pendidikan == 'SMK' ? 'selected' : '' }}>SMK</option>
                     </select>
-
                 </div>
-            </div>
 
-            <!-- Kota -->
-            <div>
-                <label class="block text-sm font-semibold text-gray-700 mb-1">Kota</label>
-                <input type="text" name="kota" value="{{ $siswa->kota }}"
-                    class="w-full border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-indigo-500 focus:outline-none">
-            </div>
+                <!-- Kelas (dinamis) -->
+                <div id="kelasContainer">
+                    <label class="block text-lg font-medium mb-2">Kelas</label>
+                    <select id="kelas" name="kelas"
+                        class="w-full px-4 py-2.5 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                        <option value="">Pilih Kelas</option>
+                    </select>
+                </div>
 
-            <!-- Alamat -->
-            <div>
-                <label class="block text-sm font-semibold text-gray-700 mb-1">Alamat</label>
-                <input type="text" name="alamat" value="{{ $siswa->alamat }}"
-                    class="w-full border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                <!-- Upload Foto -->
+                <div class="col-span-2">
+                    <label class="block text-lg font-medium mb-2">Foto Siswa</label>
+                    <input type="file" name="foto_siswa" accept="image/*" onchange="previewImage(event)"
+                        class="w-full px-4 py-2.5 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:outline-none" />
+
+                    @if ($siswa->foto_siswa)
+                        <img id="previewFoto" src="{{ asset('storage/' . $siswa->foto_siswa) }}"
+                            class="mt-3 w-32 h-32 object-cover rounded-md shadow-md" alt="Foto Siswa Lama">
+                    @else
+                        <img id="previewFoto" class="hidden mt-3 w-32 h-32 object-cover rounded-md shadow-md" alt="Preview Foto">
+                    @endif
+                </div>
             </div>
 
             <!-- Tombol Submit -->
             <button type="submit"
-                class="w-full bg-indigo-700 hover:bg-indigo-800 text-white font-semibold py-2 rounded-lg transition duration-200">
+                class="w-full bg-gradient-to-r from-indigo-700 to-blue-500 hover:from-indigo-900 hover:to-blue-700 text-white py-3 rounded-lg text-lg font-semibold transition duration-300">
                 Simpan Perubahan
             </button>
         </form>
     </div>
 </div>
+
+<script>
+    // Preview foto
+    function previewImage(event) {
+        const reader = new FileReader();
+        reader.onload = function() {
+            const img = document.getElementById('previewFoto');
+            img.src = reader.result;
+            img.classList.remove('hidden');
+        };
+        reader.readAsDataURL(event.target.files[0]);
+    }
+
+    // Dinamis kelas
+    function updateKelasOptions() {
+        const pendidikan = document.getElementById('pendidikan').value;
+        const kelasContainer = document.getElementById('kelasContainer');
+        const kelasSelect = document.getElementById('kelas');
+        kelasSelect.innerHTML = '';
+
+        let kelasList = [];
+
+        switch (pendidikan) {
+            case 'SD': kelasList = [1, 2, 3, 4, 5, 6]; break;
+            case 'SMP': kelasList = [7, 8, 9]; break;
+            case 'SMA': kelasList = [10, 11, 12]; break;
+            case 'SMK': kelasList = [10, 11, 12, 13]; break;
+            default:
+                kelasContainer.classList.add('hidden');
+                return;
+        }
+
+        kelasContainer.classList.remove('hidden');
+        kelasSelect.innerHTML = '<option value="">Pilih Kelas</option>';
+        kelasList.forEach(k => {
+            const option = document.createElement('option');
+            option.value = k;
+            option.textContent = `Kelas ${k}`;
+            if ({{ $siswa->kelas ?? 'null' }} == k) option.selected = true;
+            kelasSelect.appendChild(option);
+        });
+    }
+
+    // Jalankan saat halaman dimuat
+    document.addEventListener('DOMContentLoaded', updateKelasOptions);
+</script>

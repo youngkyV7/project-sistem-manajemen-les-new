@@ -65,6 +65,7 @@
                 </div>
                 </a>
 
+                <a href="{{ route('halamankaryasiswa.view') }}">
                 <div class="bg-white shadow-md rounded-2xl p-6 flex items-center justify-between hover:shadow-xl transition">
                     <div>
                         <h2 class="text-gray-600 text-lg font-medium">Karya Siswa</h2>

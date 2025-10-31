@@ -9,22 +9,32 @@ use Illuminate\Support\Facades\Storage;
 
 class KaryaController extends Controller
 {
+    public function sampah()
+    {
+    $karyas = KaryaSiswa::where('is_delete', true)->with('siswa')->get();
+    return view('sampahkarya', compact('karyas'));
+    }
     /**
      * Tampilkan halaman daftar karya berdasarkan siswa di admin.
      */
     public function index($id)
     {
         $siswa = Siswa::findOrFail($id);
-        $karyas = KaryaSiswa::where('siswa_id', $id)->get();
+        $karyas = KaryaSiswa::where('siswa_id', $id)
+            ->where('is_delete', false)
+            ->get();
         return view('uploadkarya', compact('siswa', 'karyas'));
     }
+
     /**
      * Tampilkan halaman daftar karya berdasarkan siswa di publik.
      */
     public function indexbebas($id)
     {
         $siswa = Siswa::findOrFail($id);
-        $karyas = KaryaSiswa::where('siswa_id', $id)->get();
+        $karyas = KaryaSiswa::where('siswa_id', $id)
+            ->where('is_delete', false)
+            ->get();
         return view('channelsiswa', compact('siswa', 'karyas'));
     }
 
@@ -32,46 +42,46 @@ class KaryaController extends Controller
      * Simpan karya baru.
      */
     public function store(Request $request, $id)
-{
-    $request->validate([
-        'judul.*' => 'required|string|max:255',
-        'kategori.*' => 'required|string|max:100',
-        'deskripsi.*' => 'required|string',
-        'link_demo.*' => 'required|url',
-        'gambar.*' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
-    ]);
+    {
+        $request->validate([
+            'judul.*' => 'required|string|max:255',
+            'kategori.*' => 'required|string|max:100',
+            'deskripsi.*' => 'required|string',
+            'link_demo.*' => 'required|url',
+            'gambar.*' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+        ]);
 
-    // Loop setiap karya yang diupload
-    foreach ($request->judul as $index => $judul) {
-        $gambarPath = null;
+        foreach ($request->judul as $index => $judul) {
+            $gambarPath = null;
 
-        if ($request->hasFile('gambar') && isset($request->file('gambar')[$index])) {
-            $gambarPath = $request->file('gambar')[$index]->store('karya_images', 'public');
+            if ($request->hasFile('gambar') && isset($request->file('gambar')[$index])) {
+                $gambarPath = $request->file('gambar')[$index]->store('karya_images', 'public');
+            }
+
+            KaryaSiswa::create([
+                'siswa_id'  => $id,
+                'judul'     => $judul,
+                'kategori'  => $request->kategori[$index],
+                'deskripsi' => $request->deskripsi[$index],
+                'gambar'    => $gambarPath,
+                'link_demo' => $request->link_demo[$index],
+                'view'      => 0,
+                'is_delete' => false,
+            ]);
         }
 
-        KaryaSiswa::create([
-            'siswa_id'  => $id,
-            'judul'     => $judul,
-            'kategori'  => $request->kategori[$index],
-            'deskripsi' => $request->deskripsi[$index],
-            'gambar'    => $gambarPath,
-            'link_demo' => $request->link_demo[$index],
-            'view'      => 0,
-        ]);
+        return back()->with('success', 'Semua karya berhasil diupload!');
     }
-
-    return back()->with('success', 'Semua karya berhasil diupload!');
-}
-
 
     /**
      * Tampilkan detail karya.
      */
     public function lihatKarya($id)
     {
-        $karya = KaryaSiswa::with('siswa')->findOrFail($id);
+        $karya = KaryaSiswa::with('siswa')
+            ->where('is_delete', false)
+            ->findOrFail($id);
 
-        // Hitung view unik berdasarkan IP dan tanggal
         $ip = request()->ip();
         $today = now()->format('Y-m-d');
         $cacheKey = "viewed_{$ip}_{$karya->id}_{$today}";
@@ -89,7 +99,7 @@ class KaryaController extends Controller
      */
     public function edit($id)
     {
-        $karya = KaryaSiswa::findOrFail($id);
+        $karya = KaryaSiswa::where('is_delete', false)->findOrFail($id);
         return view('editkarya', compact('karya'));
     }
 
@@ -98,7 +108,7 @@ class KaryaController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $karya = KaryaSiswa::findOrFail($id);
+        $karya = KaryaSiswa::where('is_delete', false)->findOrFail($id);
 
         $request->validate([
             'judul' => 'required|string|max:255',
@@ -109,11 +119,9 @@ class KaryaController extends Controller
         ]);
 
         if ($request->hasFile('gambar')) {
-            // hapus gambar lama jika ada
             if ($karya->gambar && Storage::disk('public')->exists($karya->gambar)) {
                 Storage::disk('public')->delete($karya->gambar);
             }
-
             $karya->gambar = $request->file('gambar')->store('karya_images', 'public');
         }
 
@@ -129,18 +137,26 @@ class KaryaController extends Controller
     }
 
     /**
-     * Hapus karya.
+     * Hapus karya (soft delete pakai is_delete).
      */
     public function destroy($id)
     {
         $karya = KaryaSiswa::findOrFail($id);
 
-        if ($karya->gambar && Storage::disk('public')->exists($karya->gambar)) {
-            Storage::disk('public')->delete($karya->gambar);
-        }
-
-        $karya->delete();
+        $karya->update(['is_delete' => true]);
 
         return response()->json(['success' => true]);
+    }
+
+    /**
+     * Pulihkan karya (restore dari soft delete).
+     */
+    public function restore($id)
+    {
+        $karya = KaryaSiswa::findOrFail($id);
+
+        $karya->update(['is_delete' => false]);
+
+        return back()->with('success', 'Karya berhasil dipulihkan!');
     }
 }

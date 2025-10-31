@@ -17,9 +17,21 @@ class SiswaController extends Controller
 
     public function halamanSiswa()
     {
-        $siswas = Siswa::all();
+        $siswas = Siswa::where('is_delete', false)->get();
 
         return view('halamansiswa', compact('siswas'));
+    }
+    public function halamanKaryaSiswa()
+    {
+        $siswas = Siswa::where('is_delete', false)->get();
+
+        return view('halamankaryasiswa', compact('siswas'));
+    }
+    public function siswaSampah()
+    {
+    $siswas = Siswa::where('is_delete', true)->get();
+
+    return view('sampahsiswa', compact('siswas'));
     }
 
     public function showForm($token)
@@ -142,6 +154,7 @@ class SiswaController extends Controller
             'nama_siswa' => 'required|string|max:100',
             'no_hp' => 'required|string|max:15',
             'pendidikan' => 'required|string|max:15',
+            'kelas' => 'required|string|max:5',
             'alamat' => 'required|string|max:200',
             'kota' => 'required|string|max:50',
             'foto_siswa' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
@@ -165,17 +178,21 @@ class SiswaController extends Controller
         $siswa->id_siswa = $id_siswa;
         $siswa->no_hp = $request->no_hp;
         $siswa->pendidikan = $request->pendidikan;
+        $siswa->kelas = $request->kelas;
         $siswa->alamat = $request->alamat;
         $siswa->kota = $request->kota;
         $siswa->foto_siswa = $gambarPath;
+        $siswa->is_delete = false;
 
         if ($siswa->save()) {
-            $link->is_used = true;
-            $link->save();
-            return redirect()->route('dashboard')->with('success', 'Pendaftaran Siswa Baru Berhasil');
+        $link->is_used = true;
+        $link->save();
+
+        
+        return redirect()->route('siswa.view')->with('success', '✅ Pendaftaran siswa baru berhasil disimpan!');
         } else {
-            return back()->withErrors('Anda Gagal Mendaftar');
-        }
+        return back()->withErrors('❌ Gagal menyimpan data siswa.');
+    }
     }
 
 
@@ -185,6 +202,7 @@ class SiswaController extends Controller
             'nama_siswa' => 'required|string|max:100',
             'no_hp' => 'required|string|max:15',
             'pendidikan' => 'required|string|max:15',
+            'kelas' => 'required|string|max:5',
             'alamat' => 'required|string|max:200',
             'kota' => 'required|string|max:50',
             'foto_siswa' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
@@ -207,22 +225,32 @@ class SiswaController extends Controller
         $siswa->nama_siswa = $request->nama_siswa;
         $siswa->no_hp = $request->no_hp;
         $siswa->pendidikan = $request->pendidikan;
+        $siswa->kelas = $request->kelas;
         $siswa->alamat = $request->alamat;
         $siswa->kota = $request->kota;
 
         if ($siswa->save()) {
-            return redirect()->route('siswa.view')->with('success', 'Data Siswa Berhasil Diupdate');
+            return redirect()->route('siswa.view')->with('success', '✅ Data Siswa Berhasil Diupdate');
         } else {
-            return back()->withErrors('Gagal Mengupdate Data Siswa');
+            return back()->withErrors('❌ Gagal Mengupdate Data Siswa');
         }
     }
 
 
     public function siswaDelete($id)
     {
-        $siswa = Siswa::find($id);
-        $siswa->delete();
+        $siswa = Siswa::findOrFail($id);
+        $siswa->update(['is_delete' => true]);
 
-        return redirect()->route('siswa.view')->with('success', 'Data Siswa Berhasil DiHapus');
+        return redirect()->route('siswa.view')->with('success','✅ Data Siswa Berhasil Dihapus');
     }
+
+    public function siswaRestore($id)
+    {
+    $siswa = Siswa::findOrFail($id);
+    $siswa->update(['is_delete' => false]);
+
+    return redirect()->route('siswa.view')->with('success', '✅ Data siswa berhasil dikembalikan.');
+    }
+
 }

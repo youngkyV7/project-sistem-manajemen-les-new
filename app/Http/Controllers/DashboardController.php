@@ -16,14 +16,14 @@ class DashboardController extends Controller
      public function adminDashboard()
 {
     // Hitung total siswa dari tabel Siswa
-    $totalSiswa = Siswa::count();
-
+    $totalSiswa = Siswa::where('is_delete', false)->count();
+    
     // Ambil semua admin
     $admins = User::role('admin', 'web')->get();
     $totalAdmin = $admins->count();
 
     // Hitung total karya siswa
-    $karyaSiswa = KaryaSiswa::count();
+    $karyaSiswa = KaryaSiswa::where('is_delete', false)->count();
 
     return view('admindashboard', compact('totalSiswa', 'totalAdmin', 'karyaSiswa', 'admins'));
 
