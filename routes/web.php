@@ -65,7 +65,7 @@ Route::middleware(['role:admin'])->group(function () {
 
     // 🎨 Manajemen Karya Siswa
     Route::get('/siswa/{id}/uploadkarya', [KaryaController::class, 'index'])->name('siswa.uploadkarya');
-    
+
     // 🎨 Manajemen CRUD Karya Siswa
     Route::post('/siswa/{id}/uploadkarya', [KaryaController::class, 'store'])->name('siswa.karya.store');
     Route::get('/siswa/karya/{id}/edit', [KaryaController::class, 'edit'])->name('siswa.karya.edit');
@@ -82,7 +82,7 @@ Route::middleware(['role:admin'])->group(function () {
     Route::post('/absensi/verify', [AbsensiController::class, 'verify'])->name('absensi.verify');
     Route::get('/absensi/list', [AbsensiController::class, 'list'])->name('absensi.list');
     Route::delete('/absensi/{id}/delete', [AbsensiController::class, 'hapus'])->name('absensi.delete');
-
+    Route::get('/absensi/data', [AbsensiController::class, 'getData'])->name('absensi.data');
 
 });
 
