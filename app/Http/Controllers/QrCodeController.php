@@ -30,73 +30,83 @@ class QrCodeController extends Controller
     }
 
     public function generate(Request $request)
-    {
-        $request->validate([
-            'link' => 'required|url',
-            'logo' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
-        ]);
+{
+    $request->validate([
+        'link' => 'required|url',
+        'logo' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+    ]);
 
-        $link = $request->input('link');
+    $link = $request->input('link');
+    $filename = 'qrcode_' . Str::random(10) . '.png';
+    $qrPath = storage_path('app/public/qrcodes/' . $filename);
 
-        $filename = 'qrcode_' . Str::random(10) . '.png';
-        $qrPath = storage_path('app/public/qrcodes/' . $filename);
+    // 🌀 Generate QR code dengan error correction tinggi
+    $qrContent = QrCode::format('png')
+        ->size(500)
+        ->margin(2)
+        ->errorCorrection('H') // penting agar QR tetap terbaca meskipun tertutup logo
+        ->generate($link);
 
-        // Generate QR code dasar PNG
-        $qrContent = QrCode::format('png')->size(300)->generate($link);
-        file_put_contents($qrPath, $qrContent);
+    file_put_contents($qrPath, $qrContent);
 
-        // Jika ada logo, gabungkan dengan GD Library
-        if ($request->hasFile('logo')) {
-            $logoFile = $request->file('logo');
-            $logoPath = $logoFile->getPathName();
+    // Jika ada logo, tambahkan di tengah
+    if ($request->hasFile('logo')) {
+        $logoFile = $request->file('logo');
+        $logoPath = $logoFile->getPathName();
 
-            $qrImage = imagecreatefromstring($qrContent);
-            $logoImage = imagecreatefromstring(file_get_contents($logoPath));
+        $qrImage = imagecreatefromstring(file_get_contents($qrPath));
+        $logoImage = imagecreatefromstring(file_get_contents($logoPath));
 
-            $qrWidth = imagesx($qrImage);
-            $qrHeight = imagesy($qrImage);
-            $logoWidth = imagesx($logoImage);
-            $logoHeight = imagesy($logoImage);
+        $qrWidth = imagesx($qrImage);
+        $qrHeight = imagesy($qrImage);
+        $logoWidth = imagesx($logoImage);
+        $logoHeight = imagesy($logoImage);
 
-            // Skala logo menjadi 25% dari lebar QR
-            $newLogoWidth = $qrWidth * 0.25;
-            $scale = $newLogoWidth / $logoWidth;
-            $newLogoHeight = $logoHeight * $scale;
+        // Skala logo agar max 15–20% dari lebar QR (biar tidak menutupi area penting)
+        $newLogoWidth = $qrWidth * 0.18;
+        $scale = $newLogoWidth / $logoWidth;
+        $newLogoHeight = $logoHeight * $scale;
 
-            // Posisi logo di tengah QR
-            $dstX = ($qrWidth - $newLogoWidth) / 2;
-            $dstY = ($qrHeight - $newLogoHeight) / 2;
+        // Posisi logo di tengah
+        $dstX = ($qrWidth - $newLogoWidth) / 2;
+        $dstY = ($qrHeight - $newLogoHeight) / 2;
 
-            imagecopyresampled(
-                $qrImage,
-                $logoImage,
-                $dstX,
-                $dstY,
-                0,
-                0,
-                $newLogoWidth,
-                $newLogoHeight,
-                $logoWidth,
-                $logoHeight
-            );
+        // Buat transparansi untuk hasil rapi
+        imagealphablending($qrImage, true);
+        imagesavealpha($qrImage, true);
 
-            // Simpan hasil akhir ke storage
-            imagepng($qrImage, $qrPath);
+        // Tempel logo ke QR
+        imagecopyresampled(
+            $qrImage,
+            $logoImage,
+            $dstX,
+            $dstY,
+            0,
+            0,
+            $newLogoWidth,
+            $newLogoHeight,
+            $logoWidth,
+            $logoHeight
+        );
 
-            imagedestroy($qrImage);
-            imagedestroy($logoImage);
-        }
+        // Simpan hasil akhir ke file
+        imagepng($qrImage, $qrPath);
 
-        // Buat preview base64
-        $qrBase64 = 'data:image/png;base64,' . base64_encode(file_get_contents($qrPath));
-
-        return back()->with([
-            'success' => 'QR Code berhasil dibuat!',
-            'link' => $link,
-            'qrPath' => 'storage/qrcodes/' . $filename,
-            'qrCode' => "<img src='{$qrBase64}' class='mx-auto' alt='QR Code'>"
-        ]);
+        imagedestroy($qrImage);
+        imagedestroy($logoImage);
     }
+
+    // Buat preview base64
+    $qrBase64 = 'data:image/png;base64,' . base64_encode(file_get_contents($qrPath));
+
+    return back()->with([
+        'success' => 'QR Code berhasil dibuat!',
+        'link' => $link,
+        'qrPath' => 'storage/qrcodes/' . $filename,
+        'qrCode' => "<img src='{$qrBase64}' class='mx-auto' alt='QR Code'>"
+    ]);
+}
+
 
     /**
      * Download QR Code dari storage
