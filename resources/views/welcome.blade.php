@@ -15,8 +15,6 @@
 </head>
 
 <body class="bg-gray-50 font-sans">
-  <x-alert></x-alert>
-
   <!-- Navbar -->
   <nav class="bg-white shadow-md text-lg fixed w-full top-0 left-0 z-50">
     <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
@@ -57,6 +55,9 @@
       </ul>
     </div>
   </nav>
+  <div class="fixed top-20 w-full max-w-md">
+    <x-alert></x-alert>
+  </div>
 
   <!-- Hero Section -->
   <section

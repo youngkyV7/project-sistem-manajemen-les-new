@@ -9,34 +9,35 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 use App\Models\KaryaSiswa;
-
+use Illuminate\Support\Facades\Storage;
+use SimpleSoftwareIO\QrCode\Facades\QrCode;
 
 class SiswaController extends Controller
 {
     public function storeKarya(Request $request, $id)
-{
-    $request->validate([
-        'judul' => 'required|string|max:255',
-        'deskripsi' => 'nullable|string',
-        'gambar' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
-    ]);
+    {
+        $request->validate([
+            'judul' => 'required|string|max:255',
+            'deskripsi' => 'nullable|string',
+            'gambar' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+        ]);
 
-    $siswa = Siswa::findOrFail($id);
+        $siswa = Siswa::findOrFail($id);
 
-    if ($request->hasFile('gambar')) {
-        $path = $request->file('gambar')->store('karya_images', 'public');
+        if ($request->hasFile('gambar')) {
+            $path = $request->file('gambar')->store('karya_images', 'public');
+        }
+
+        KaryaSiswa::create([
+            'judul' => $request->judul,
+            'deskripsi' => $request->deskripsi,
+            'gambar' => $path,
+            'siswa_id' => $siswa->id,
+        ]);
+
+        return redirect()->route('siswa.uploadkarya', $siswa->id)
+            ->with('success', 'Karya berhasil diupload!');
     }
-
-    KaryaSiswa::create([
-        'judul' => $request->judul,
-        'deskripsi' => $request->deskripsi,
-        'gambar' => $path,
-        'siswa_id' => $siswa->id,
-    ]);
-
-    return redirect()->route('siswa.uploadkarya', $siswa->id)
-                     ->with('success', 'Karya berhasil diupload!');
-}
 
     public function uploadKarya($id)
     {
@@ -66,26 +67,97 @@ class SiswaController extends Controller
     public function generateLink(Request $request)
     {
         $request->validate([
+            'token' => 'required|string|max:50',
             'password' => 'required',
+            'gambar' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
         ]);
 
         $user = Auth::user();
 
+        // 🔒 Cek password
         if (!Hash::check($request->password, $user->password)) {
             return back()->withErrors('Password salah!');
         }
 
-        $token = Str::random(40);
+        // 📦 Ambil token dari input
+        $tokenInput = $request->token;
 
-        $tokens = new Token();
-        $tokens->token = $token;
-        $tokens->is_used = false;
-
-        if ($tokens->save()) {
-            $link = route('form.daftar', ['token' => $token]);
-
-            return back()->with('success', 'Link berhasil dibuat: ' . $link);
+        // Pastikan token belum digunakan
+        if (Token::where('token', $tokenInput)->exists()) {
+            return back()->withErrors('Token sudah digunakan, silakan gunakan token lain.');
         }
+
+        // 💾 Simpan token ke database
+        $token = new Token();
+        $token->token = $tokenInput;
+        $token->is_used = false;
+        $token->save();
+
+        // 🔗 Buat link tujuan form
+        $link = route('form.daftar', ['token' => $tokenInput]);
+
+        // 🌀 Generate QR Code dalam format PNG (bukan SVG)
+        $qr = \QrCode::format('png')
+            ->size(300)
+            ->margin(2)
+            ->errorCorrection('H')
+            ->generate($link);
+
+        // Simpan QR sementara ke file agar bisa digabungkan
+        $tempQrPath = storage_path('app/public/temp_qr.png');
+        file_put_contents($tempQrPath, $qr);
+
+        // Jika tidak ada logo, tampilkan langsung
+        if (!$request->hasFile('gambar')) {
+            $qrBase64 = 'data:image/png;base64,' . base64_encode($qr);
+            return back()->with([
+                'success' => 'Link berhasil dibuat!',
+                'link' => $link,
+                'qrCode' => "<img src='{$qrBase64}' class='mx-auto'>"
+            ]);
+        }
+
+        // 📷 Jika ada logo, gabungkan
+        $gambar = $request->file('gambar');
+        $gambarPath = $gambar->store('qr_logo', 'public');
+        $logoPath = storage_path('app/public/' . $gambarPath);
+
+        $qrImage = imagecreatefrompng($tempQrPath);
+        $logo = imagecreatefromstring(file_get_contents($logoPath));
+
+        $qrWidth = imagesx($qrImage);
+        $qrHeight = imagesy($qrImage);
+        $logoWidth = imagesx($logo);
+        $logoHeight = imagesy($logo);
+
+        // Skala logo jadi 20% lebar QR
+        $logoQRWidth = $qrWidth * 0.2;
+        $scale = $logoQRWidth / $logoWidth;
+        $logoQRHeight = $logoHeight * $scale;
+
+        $dstX = ($qrWidth - $logoQRWidth) / 2;
+        $dstY = ($qrHeight - $logoQRHeight) / 2;
+
+        $qrWithLogo = imagecreatetruecolor($qrWidth, $qrHeight);
+        imagecopyresampled($qrWithLogo, $qrImage, 0, 0, 0, 0, $qrWidth, $qrHeight, $qrWidth, $qrHeight);
+        imagecopyresampled($qrWithLogo, $logo, $dstX, $dstY, 0, 0, $logoQRWidth, $logoQRHeight, $logoWidth, $logoHeight);
+
+        // Output jadi base64
+        ob_start();
+        imagepng($qrWithLogo);
+        $qrFinal = ob_get_clean();
+
+        imagedestroy($qrImage);
+        imagedestroy($logo);
+        imagedestroy($qrWithLogo);
+
+        $qrBase64 = 'data:image/png;base64,' . base64_encode($qrFinal);
+
+        return back()->with([
+            'success' => 'Link berhasil dibuat!',
+            'link' => $link,
+            'qrCode' => "<img src='{$qrBase64}' class='mx-auto'>"
+        ]);
     }
 
     public function siswaAdd(Request $request, $token)
@@ -102,7 +174,7 @@ class SiswaController extends Controller
             'pendidikan' => 'required|string|max:15',
             'alamat' => 'required|string|max:200',
             'kota' => 'required|string|max:50',
-            'foto_siswa' =>'nullable|image|mimes:jpg,jpeg,png|max:2048',
+            'foto_siswa' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
         ]);
 
         $jumlah_siswa = Siswa::count() + 1;
@@ -139,20 +211,24 @@ class SiswaController extends Controller
             'pendidikan' => 'required|string|max:15',
             'alamat' => 'required|string|max:200',
             'kota' => 'required|string|max:50',
-            'foto_siswa' =>'nullable|image|mimes:jpg,jpeg,png|max:2048',
+            'foto_siswa' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
         ]);
 
+        $siswa = Siswa::findOrFail($id);
+
         if ($request->hasFile('foto_siswa')) {
+            if ($siswa->foto_siswa && Storage::disk('public')->exists($siswa->foto_siswa)) {
+                Storage::disk('public')->delete($siswa->foto_siswa);
+            }
             $gambarPath = $request->file('foto_siswa')->store('siswa_images', 'public');
+            $siswa->foto_siswa = $gambarPath;
         }
 
-        $siswa = Siswa::findOrFail($id);
         $siswa->nama_siswa = $request->nama_siswa;
         $siswa->no_hp = $request->no_hp;
         $siswa->pendidikan = $request->pendidikan;
         $siswa->alamat = $request->alamat;
         $siswa->kota = $request->kota;
-        $siswa->foto_siswa = $gambarPath;
 
         if ($siswa->save()) {
             return redirect()->route('siswa.view')->with('success', 'Data Siswa Berhasil Diupdate');

@@ -13,6 +13,8 @@ class LaporanHasilBelajar extends Model
 
     protected $fillable = [
         'siswa_id',
+        'platform', // ✅ tambahkan ini
+        'guru_id',
         'tanggal',
         'hasil',
         'catatan',
@@ -22,4 +24,10 @@ class LaporanHasilBelajar extends Model
     {
         return $this->belongsTo(Siswa::class, 'siswa_id');
     }
+
+    public function guru()
+    {
+        return $this->belongsTo(\App\Models\User::class, 'guru_id');
+    }
+
 }

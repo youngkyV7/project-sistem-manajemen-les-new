@@ -6,7 +6,11 @@ use App\Http\Controllers\LoginController;
 use App\Http\Controllers\SiswaController;
 use App\Http\Controllers\LaporanController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\QrCodeController;
 
+Route::get('/qrcode/{token}', [QrCodeController::class, 'show'])->name('qrcode.show');
+
+Route::get('/generate-qrcode', [QrCodeController::class, 'generate']);
 // 🏠 Dashboard Utama
 Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
 
@@ -40,6 +44,10 @@ Route::middleware(['role:admin'])->group(function () {
     // 🔗 Generate link pendaftaran
     Route::post('/generate-link', [SiswaController::class, 'generateLink'])->name('generate.link');
 
+     Route::get('/buattambahsiswa', function () {
+        return view('buattambahsiswa');
+    })->name('siswa.create');
+
     // 👩‍💼 Manajemen Admin
     Route::get('/admin', [DashboardController::class, 'showAdmins'])->name('admin.list');
 
@@ -48,6 +56,7 @@ Route::middleware(['role:admin'])->group(function () {
     Route::get('/siswa/{id}/lihatkarya', [KaryaController::class, 'lihatkarya'])->name('siswa.lihatkarya');
     Route::post('/siswa/{id}/uploadkarya', [KaryaController::class, 'store'])->name('siswa.karya.store');
     Route::get('/siswa/karya/{id}/edit', [KaryaController::class, 'edit'])->name('siswa.karya.edit');
+    Route::put('/siswa/karya/{id}', [KaryaController::class, 'update'])->name('siswa.karya.update');
     Route::delete('/siswa/karya/{id}', [KaryaController::class, 'destroy'])->name('siswa.karya.destroy');
 
     // 📑 Fitur Laporan Harian Siswa

@@ -27,6 +27,10 @@ return [
     */
 
     'env' => env('APP_ENV', 'production'),
+    'aliases' => [
+    'QrCode' => SimpleSoftwareIO\QrCode\Facades\QrCode::class,
+
+],
 
     /*
     |--------------------------------------------------------------------------
@@ -53,6 +57,7 @@ return [
     */
 
     'url' => env('APP_URL', 'http://localhost'),
+    'QrCode' => SimpleSoftwareIO\QrCode\Facades\QrCode::class,
 
     /*
     |--------------------------------------------------------------------------

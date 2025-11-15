@@ -17,15 +17,14 @@
             position: relative;
         }
 
-        /* ✅ Background gambar dengan posisi absolut */
         .background {
-            position: absolute;
+            position: fixed;
             top: 0;
             left: 0;
-            width: 595pt;  /* ukuran A4 dalam point */
+            width: 595pt;
             height: 842pt;
             object-fit: cover;
-            opacity: 1; /* transparansi lembut */
+            opacity: 1;
             z-index: -1;
         }
 
@@ -37,16 +36,16 @@
 
         .header {
             text-align: center;
-            margin-bottom: 40px;
+            margin-bottom: 20px;
         }
 
         .header img.logo {
-            width: 250px;
-            margin-bottom: 10px;
+            width: 150px;
+            margin-bottom: 5px;
         }
 
         .header h1 {
-            font-size: 26px;
+            font-size: 20px;
             font-weight: bold;
             color: #1a237e;
             margin-bottom: 5px;
@@ -60,37 +59,45 @@
             margin: 15px auto 25px;
         }
 
+        /* 🔹 Box Info dengan warna biru tosca bercampur putih */
         .info {
-            background-color: rgba(255, 255, 255, 0.85);
-            border: 1px solid #d1d5db;
+            background: linear-gradient(135deg, #b2f7ef 0%, #e0fdf7 100%);
+            border: 1.5px solid #5fd3b3;
             border-radius: 8px;
-            padding: 15px 20px;
-            margin-bottom: 25px;
-            font-size: 15px;
+            padding: 10px 14px;
+            margin-bottom: 10px;
+            font-size: 14px;
+            box-shadow: 0 2px 4px rgba(0, 128, 128, 0.15);
         }
 
+        /* 🔹 Tabel dengan sentuhan tosca lembut */
         table {
             width: 100%;
             border-collapse: collapse;
             font-size: 15px;
             margin-top: 10px;
             background-color: rgba(255, 255, 255, 0.9);
+            border: 1.5px solid #a7e3dc;
         }
 
         th, td {
-            border: 1px solid #9ca3af;
+            border: 1px solid #9be0d2;
             padding: 10px 12px;
         }
 
         th {
-            background-color: #e0e7ff;
-            color: #1e3a8a;
+            background-color: #b2f7ef;
+            color: #004d40;
             font-weight: bold;
             text-align: left;
         }
 
         tr:nth-child(even) td {
-            background-color: #f3f4f6;
+            background-color: #e6fffb;
+        }
+
+        tr:nth-child(odd) td {
+            background-color: #ffffff;
         }
 
         .signature {
@@ -100,33 +107,33 @@
         }
 
         .border-frame {
-            border: 8px double #c7d2fe;
+            border: 8px double #5fd3b3; /* 🔹 Warna tosca lembut */
             padding: 30px;
             border-radius: 12px;
-            background-color: rgba(255, 255, 255, 0.85);
+            background-color: rgba(255, 255, 255, 0.80);
+            box-shadow: 0 0 10px rgba(0, 128, 128, 0.15); /* 🔹 Tambah efek lembut */
         }
 
+
         .footer {
-    text-align: center; /* biar isinya rata tengah */
-    margin-top: 30px; /* jarak dari tanda tangan */
-}
+            text-align: center;
+            margin-top: 25px;
+        }
 
-.footer img {
-    width: 65%; /* ubah sesuai kebutuhan, misal 60%-80% */
-    display: inline-block; /* pastikan bisa dirata-tengah */
-}
-
+        .footer img {
+            width: 100%;
+            display: inline-block;
+        }
     </style>
 </head>
 <body>
 
-    <!-- ✅ Background gambar tetap dalam halaman A4 -->
     @if(isset($base64) && $base64)
         <img src="{{ $base64 }}" alt="Background" class="background">
     @endif
 
     <div class="container">
-        <div class="border-frame">
+        <div class="border-frame">  
             <div class="header">
                 <img src="{{ public_path('images/Logo PK.jpeg') }}" alt="Logo Sekolah" class="logo">
                 <h1>Laporan Hasil Belajar Siswa</h1>
@@ -135,6 +142,7 @@
 
             <div class="info">
                 <p><strong>Nama Siswa:</strong> {{ $laporan->siswa->nama_siswa }}</p>
+                <p><strong>Platform Belajar:</strong> {{ $laporan->platform }}</p>
                 <p><strong>Tanggal:</strong> {{ \Carbon\Carbon::parse($laporan->tanggal)->format('d F Y') }}</p>
             </div>
 
@@ -152,13 +160,17 @@
                     <td>{{ $laporan->catatan ?? '-' }}</td>
                 </tr>
             </table>
+
             <div class="footer">
-    <img src="{{ public_path('images/Level.jpeg') }}" 
-         alt="Keterangan Level Perkembangan">
-</div>
+                <img src="{{ public_path('images/Level.jpeg') }}" alt="Keterangan Level Perkembangan">
+            </div>
+
             <div class="signature">
                 <p>...........................................</p>
-                <p><strong>Dian Nugroho S.Kom</strong></p>
+                <p>Guru : <strong>{{ $laporan->guru ? $laporan->guru->name : 'Guru Pembimbing' }}</strong></p>
             </div>
+        </div>
+    </div>
+
 </body>
 </html>

@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -35,6 +36,8 @@
                     <tr>
                         <th class="px-4 py-3 text-left text-sm font-semibold">No</th>
                         <th class="px-4 py-3 text-left text-sm font-semibold">Nama Siswa</th>
+                        <th class="px-4 py-3 text-left text-sm font-semibold">Platform</th>
+                        <th class="px-4 py-3 text-left text-sm font-semibold">Guru</th>
                         <th class="px-4 py-3 text-left text-sm font-semibold">Tanggal</th>
                         <th class="px-4 py-3 text-left text-sm font-semibold">Hasil</th>
                         <th class="px-4 py-3 text-left text-sm font-semibold">Catatan</th>
@@ -46,6 +49,8 @@
                         <tr class="hover:bg-gray-50 transition">
                             <td class="px-4 py-3 text-sm text-gray-700">{{ $loop->iteration }}</td>
                             <td class="px-4 py-3 text-sm text-gray-700">{{ $laporan->siswa->nama_siswa }}</td>
+                            <td class="px-4 py-3 text-sm text-gray-700">{{ $laporan->platform }}</td>
+                            <td class="px-4 py-3 text-sm text-gray-700">{{ $laporan->guru ? $laporan->guru->name : '-' }}</td>
                             <td class="px-4 py-3 text-sm text-gray-700">{{ $laporan->tanggal }}</td>
                             <td class="px-4 py-3 text-sm text-gray-700">{{ $laporan->hasil }}</td>
                             <td class="px-4 py-3 text-sm text-gray-700">{{ $laporan->catatan }}</td>
@@ -61,7 +66,7 @@
             </table>
         </div>
     @endif
-</div>
+  </div>
 
 </body>
 </html>
