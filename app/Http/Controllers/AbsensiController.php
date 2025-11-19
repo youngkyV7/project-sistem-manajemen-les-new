@@ -11,11 +11,55 @@ use Carbon\Carbon;
 
 class AbsensiController extends Controller
 {
+    // ============ HALAMAN UTAMA ==================
     public function index()
     {
-        return view('absensi');
+        // Ambil daftar sesi dari kolom 'sesi' di tabel siswa
+        $sesi = Siswa::select('sesi')
+                    ->distinct()
+                    ->orderBy('sesi')
+                    ->get();
+
+        return view('absensi', compact('sesi'));
     }
 
+    // ============ AMBIL DATA SISWA BERDASARKAN SESI ==================
+    public function getData(Request $request)
+    {
+        $today = now()->toDateString();
+
+        if (!$request->filled('sesi')) {
+            return response()->json([
+                'belum_absen' => [],
+                'sudah_absen' => []
+            ]);
+        }
+
+        $sesi = $request->sesi;
+
+        // Ambil siswa berdasarkan sesi
+        $siswaQuery = Siswa::where('sesi', $sesi);
+
+        // Siswa yang sudah absen hari ini
+        $absenHariIni = Absensi::whereDate('tanggal', $today)
+                                ->pluck('siswa_id')
+                                ->toArray();
+
+        $siswaBelumAbsen = (clone $siswaQuery)
+                            ->whereNotIn('id', $absenHariIni)
+                            ->get(['id', 'nama_siswa']);
+
+        $siswaSudahAbsen = (clone $siswaQuery)
+                            ->whereIn('id', $absenHariIni)
+                            ->get(['id', 'nama_siswa']);
+
+        return response()->json([
+            'belum_absen' => $siswaBelumAbsen,
+            'sudah_absen' => $siswaSudahAbsen,
+        ]);
+    }
+
+    // ============ VERIFIKASI WAJAH ==================
     public function verify(Request $request)
     {
         try {
@@ -43,7 +87,8 @@ class AbsensiController extends Controller
             if ($data['status'] === 'success') {
                 $recognizedName = trim($data['name']);
 
-                $siswa = Siswa::whereRaw('LOWER(nama_siswa) = ?', [strtolower($recognizedName)])->first();
+                $siswa = Siswa::whereRaw('LOWER(nama_siswa) = ?', [strtolower($recognizedName)])
+                            ->first();
 
                 if (!$siswa) {
                     return response()->json([
@@ -55,8 +100,8 @@ class AbsensiController extends Controller
                 $today = Carbon::today();
 
                 $sudahAbsen = Absensi::where('siswa_id', $siswa->id)
-                    ->whereDate('tanggal', $today)
-                    ->exists();
+                                    ->whereDate('tanggal', $today)
+                                    ->exists();
 
                 if ($sudahAbsen) {
                     return response()->json([
@@ -95,6 +140,7 @@ class AbsensiController extends Controller
         }
     }
 
+    // ============ LIST ABSENSI ==================
     public function list(Request $request)
     {
         $query = Absensi::with('siswa');
@@ -117,31 +163,19 @@ class AbsensiController extends Controller
 
         return view('listabsensi', compact('absensis'));
     }
+
+    // ============ HAPUS ==================
     public function hapus($id)
-{
-    try {
-        $absen = Absensi::findOrFail($id);
-        $absen->delete();
+    {
+        try {
+            $absen = Absensi::findOrFail($id);
+            $absen->delete();
 
-        return redirect()->route('absensi.list')->with('success', 'Absensi berhasil dihapus. Siswa bisa absen kembali.');
-    } catch (\Exception $e) {
-        return redirect()->route('absensi.list')->with('error', 'Gagal menghapus absensi: ' . $e->getMessage());
+            return redirect()->route('absensi.list')
+                ->with('success', 'Absensi berhasil dihapus. Siswa bisa absen kembali.');
+        } catch (\Exception $e) {
+            return redirect()->route('absensi.list')
+                ->with('error', 'Gagal menghapus absensi: ' . $e->getMessage());
+        }
     }
-}
-
-public function getData()
-{
-    $today = now()->toDateString();
-
-    $absenHariIni = Absensi::whereDate('tanggal', $today)->pluck('siswa_id')->toArray();
-
-    $siswaBelumAbsen = Siswa::whereNotIn('id', $absenHariIni)->get(['id', 'nama_siswa']);
-    $siswaSudahAbsen = Siswa::whereIn('id', $absenHariIni)->get(['id', 'nama_siswa']);
-
-    return response()->json([
-        'belum_absen' => $siswaBelumAbsen,
-        'sudah_absen' => $siswaSudahAbsen,
-    ]);
-}
-
 }

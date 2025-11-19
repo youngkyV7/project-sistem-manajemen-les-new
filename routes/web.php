@@ -89,11 +89,14 @@ Route::middleware(['role:admin'])->group(function () {
     Route::post('/absensi/verify', [AbsensiController::class, 'verify'])->name('absensi.verify');
     Route::get('/absensi/list', [AbsensiController::class, 'list'])->name('absensi.list');
     Route::delete('/absensi/{id}/delete', [AbsensiController::class, 'hapus'])->name('absensi.delete');
-
+    Route::get('/absensi/data', [AbsensiController::class, 'getData'])->name('absensi.data');
     //recycle bin
     Route::get('/recyclebin', function () {
     return view('recyclebin');
     })->name('recyclebin');
+
+    Route::put('/siswa/update-sesi/{id}', [SiswaController::class, 'updateSesi'])
+    ->name('siswa.updateSesi');
 
 });
 
