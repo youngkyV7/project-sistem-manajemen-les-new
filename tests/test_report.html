@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>PHPUnit Test Report</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@3.3.2/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-100 p-8">
+    <h1 class="text-3xl font-bold text-center mb-6">PHPUnit Test Report</h1>
+
+    <table class="min-w-full bg-white shadow-md rounded-lg overflow-hidden">
+        <thead class="bg-gray-200">
+            <tr>
+                <th class="py-2 px-4">#</th>
+                <th class="py-2 px-4">Class</th>
+                <th class="py-2 px-4">Test Name</th>
+                <th class="py-2 px-4">Status</th>
+                <th class="py-2 px-4">Time (s)</th>
+                <th class="py-2 px-4">Message</th>
+            </tr>
+        </thead>
+        <tbody id="test-table-body"></tbody>
+        <tfoot>
+            <tr class="bg-gray-100 font-bold">
+                <td colspan="4" class="py-2 px-4 text-right">Total Time:</td>
+                <td colspan="2" class="py-2 px-4" id="total-time">0</td>
+            </tr>
+        </tfoot>
+    </table>
+
+    <script>
+        // Ambil JSON hasil test
+        fetch('test-result.json')
+            .then(res => res.json())
+            .then(data => {
+                const tbody = document.getElementById('test-table-body');
+                let totalTime = 0;
+                let counter = 1;
+
+                data.tests.forEach(testSuite => {
+                    testSuite.tests.forEach(test => {
+                        totalTime += test.time;
+                        const tr = document.createElement('tr');
+                        tr.className = test.status === 'fail' ? 'bg-red-100' : 'bg-green-50';
+                        tr.innerHTML = `
+                            <td class="py-2 px-4">${counter++}</td>
+                            <td class="py-2 px-4">${testSuite.name}</td>
+                            <td class="py-2 px-4">${test.name}</td>
+                            <td class="py-2 px-4 font-bold text-center">${test.status.toUpperCase()}</td>
+                            <td class="py-2 px-4 text-center">${test.time.toFixed(2)}</td>
+                            <td class="py-2 px-4">${test.message || ''}</td>
+                        `;
+                        tbody.appendChild(tr);
+                    });
+                });
+
+                document.getElementById('total-time').innerText = totalTime.toFixed(2) + ' s';
+            });
+    </script>
+</body>
+</html>
