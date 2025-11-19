@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Daftar Siswa</title>
+    <title>Recycle Bin - Siswa</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 </head>
@@ -16,29 +16,37 @@
         <x-alert></x-alert>
 
         <div class="flex justify-between items-center px-6 mb-4">
-            <h1 class="text-3xl font-bold text-indigo-700">Daftar Siswa</h1>
+            <h1 class="text-3xl font-bold text-red-600 flex items-center gap-2">
+                ♻️ Recycle Bin — Siswa Terhapus
+            </h1>
 
-            <!-- Search Bar -->
+            <!-- Tombol Kembali -->
+            <a href="{{ route('recyclebin') }}"
+                class="px-4 py-2 bg-indigo-600 text-white rounded-lg shadow hover:bg-indigo-700 transition">
+                ← Kembali ke Recycle Bin
+            </a>
+        </div>
+
+        <!-- Search -->
+        <div class="flex justify-end px-6 mb-4">
             <div class="relative">
-                <input 
-                    type="text"
-                    placeholder="Cari nama siswa..."
-                    x-model="search"
-                    class="w-64 md:w-80 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none"
-                >
-                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 absolute right-3 top-2.5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <input type="text" placeholder="Cari nama siswa..." x-model="search"
+                    class="w-64 md:w-80 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:outline-none">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 absolute right-3 top-2.5 text-gray-400" fill="none"
+                    viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                         d="M21 21l-4.35-4.35M11 19a8 8 0 100-16 8 8 0 000 16z" />
                 </svg>
             </div>
         </div>
 
+        <!-- Tabel -->
         <div class="overflow-x-auto mx-6">
             <table class="w-full table-auto border-collapse bg-white rounded-lg shadow-md overflow-hidden">
-                <thead class="bg-indigo-700 text-white">
+                <thead class="bg-red-600 text-white">
                     <tr class="border-b-2 text-left">
                         <th class="w-16 px-4 py-3 text-center">No.</th>
-                        <th class="w-24 px-4 py-3 text-center">Foto Siswa</th>
+                        <th class="w-24 px-4 py-3 text-center">Foto</th>
                         <th class="px-4 py-3">Nama Siswa</th>
                         <th class="px-4 py-3">No. HP</th>
                         <th class="px-4 py-3">Pendidikan</th>
@@ -60,7 +68,7 @@
                                 @if ($siswa->foto_siswa)
                                     <img src="{{ asset('storage/' . $siswa->foto_siswa) }}"
                                         alt="Foto {{ $siswa->nama_siswa }}"
-                                        class="w-12 h-12 rounded-full object-cover border-2 border-indigo-300 shadow-md mx-auto">
+                                        class="w-12 h-12 rounded-full object-cover border-2 border-red-300 shadow-md mx-auto">
                                 @else
                                     <div
                                         class="w-12 h-12 rounded-full bg-gray-300 flex items-center justify-center text-gray-600 text-sm font-semibold mx-auto">
@@ -76,49 +84,27 @@
                             <td class="px-4 py-3">{{ $siswa->alamat }}</td>
                             <td class="px-4 py-3">{{ $siswa->kota }}</td>
 
-                            <!-- Aksi -->
+                            <!-- Tombol Pulihkan -->
                             <td class="px-4 py-3 text-center">
-                                <div class="flex justify-center space-x-4">
-
-                                    <!-- Tombol Edit -->
-                                    <div x-data="{ editsiswa : false }">
-                                        <button @click="editsiswa = true"
-                                            class="flex items-center text-blue-500 hover:text-blue-600 transition">
-                                            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 mr-1"
-                                                fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                    d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 
-                                                    2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                                            </svg>
-                                            <span>Edit</span>
-                                        </button>
-                                        <x-siswa.update :siswa="$siswa"></x-siswa.update>
-                                    </div>
-
-                                    <!-- Tombol Delete -->
-                                    <div x-data="{ deletesiswa : false }">
-                                        <button @click="deletesiswa = true"
-                                            class="flex items-center text-red-500 hover:text-red-600 transition">
-                                            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 mr-1"
-                                                fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                    d="M19 7l-.867 12.142A2 2 0 0116.138 
-                                                    21H7.862a2 2 0 01-1.995-1.858L5 
-                                                    7m5 4v6m4-6v6m1-10V4a1 1 
-                                                    0 00-1-1h-4a1 1 0 00-1 
-                                                    1v3M4 7h16" />
-                                            </svg>
-                                            <span>Delete</span>
-                                        </button>
-                                        <x-siswa.delete :siswa="$siswa"></x-siswa.delete>
-                                    </div>
-                                </div>
+                                <form action="{{ route('siswa.restore', $siswa->id) }}" method="POST"
+                                onsubmit="return confirm('Pulihkan siswa ini?')" class="inline-block">
+                                @csrf
+                                    <button type="submit"
+                                    class="flex items-center justify-center bg-green-500 hover:bg-green-600 text-white font-medium px-3 py-2 rounded-lg shadow transition">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 mr-1" fill="none"
+                                    viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M4 4v6h6M20 20v-6h-6M4 10a8 8 0 0116 0M20 14a8 8 0 01-16 0" />
+                                    </svg>
+                                    Pulihkan
+                                    </button>
+                                </form>
                             </td>
                         </tr>
                     @empty
                         <tr>
                             <td colspan="9" class="text-gray-400 text-2xl text-center py-8">
-                                Belum ada Siswa Terdaftar
+                                Tidak ada siswa di Recycle Bin.
                             </td>
                         </tr>
                     @endforelse
@@ -127,4 +113,5 @@
         </div>
     </div>
 </body>
+
 </html>
