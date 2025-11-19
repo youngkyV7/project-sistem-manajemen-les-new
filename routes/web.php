@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\QrCodeController;
 use App\Http\Controllers\AbsensiController;
 
+
 Route::get('/qrcode/{token}', [QrCodeController::class, 'show'])->name('qrcode.show');
 
 Route::get('/generate-qrcode', [QrCodeController::class, 'generate']);

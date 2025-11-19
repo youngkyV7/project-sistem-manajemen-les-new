@@ -187,7 +187,6 @@ class SiswaController extends Controller
         if ($siswa->save()) {
         $link->is_used = true;
         $link->save();
-
         
         return redirect()->route('siswa.view')->with('success', '✅ Pendaftaran siswa baru berhasil disimpan!');
         } else {

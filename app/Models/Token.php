@@ -6,5 +6,6 @@ use Illuminate\Database\Eloquent\Model;
 
 class Token extends Model
 {
-    //
+    protected $fillable = ['token', 'is_used'];
+
 }
