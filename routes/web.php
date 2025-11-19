@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\QrCodeController;
 use App\Http\Controllers\AbsensiController;
 
+
 Route::get('/qrcode/{token}', [QrCodeController::class, 'show'])->name('qrcode.show');
 
 Route::get('/generate-qrcode', [QrCodeController::class, 'generate']);
@@ -89,6 +90,7 @@ Route::middleware(['role:admin'])->group(function () {
     Route::post('/absensi/verify', [AbsensiController::class, 'verify'])->name('absensi.verify');
     Route::get('/absensi/list', [AbsensiController::class, 'list'])->name('absensi.list');
     Route::delete('/absensi/{id}/delete', [AbsensiController::class, 'hapus'])->name('absensi.delete');
+    Route::get('/absensi/data',[AbsensiController::class, 'getData'])->name('absensi.data');
 
     //recycle bin
     Route::get('/recyclebin', function () {
