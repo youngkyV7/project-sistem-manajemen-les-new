@@ -41,7 +41,7 @@
         </li>
         <li>
           <a
-            href="https://wa.me/628815074046"
+            href="https://wa.me/628988888369"
             target="_blank"
             rel="noopener noreferrer"
             class="flex items-center bg-green-500 hover:bg-green-600 px-6 py-2 text-white rounded-lg shadow-lg gap-2 transition"

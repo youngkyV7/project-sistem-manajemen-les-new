@@ -25,7 +25,7 @@ return new class extends Migration
 
             // Tambahkan kolom hasil
             if (!Schema::hasColumn('laporan_hasil_belajar', 'hasil')) {
-                $table->enum('hasil', ['Sangat Baik', 'Baik', 'Cukup', 'Kurang'])->after('tanggal');
+                $table->enum('hasil', ['Sangat Mahir', 'Mahir', 'Berkembang', 'Mulai Berkembang', 'Awal Berkembang'])->after('tanggal');
             }
 
             // Tambahkan kolom catatan

@@ -14,8 +14,9 @@ return new class extends Migration
         Schema::create('laporan_hasil_belajar', function (Blueprint $table) {
             $table->id();
             $table->foreignId('siswa_id')->constrained('siswas')->onDelete('cascade');
+            $table->string('platform')->nullable(); // ✅ Tambah ini
             $table->date('tanggal');
-            $table->enum('hasil', ['Sangat Baik', 'Baik', 'Cukup', 'Kurang']);
+            $table->enum('hasil', ['Sangat Mahir', 'Mahir', 'Berkembang', 'Mulai Berkembang', 'Awal Berkembang']);
             $table->text('catatan')->nullable();
             $table->timestamps();
         });
