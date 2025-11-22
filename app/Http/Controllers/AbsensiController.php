@@ -14,17 +14,30 @@ class AbsensiController extends Controller
     // ============ HALAMAN UTAMA ==================
     public function index()
     {
-        // Tidak pakai sesi, cukup tampilkan halaman
-        return view('absensi');
+        $sesi = Siswa::select('sesi')
+                    ->distinct()
+                    ->orderBy('sesi')
+                    ->get();
+
+        return view('absensi', compact('sesi'));
     }
 
-    // ============ AMBIL DATA SEMUA SISWA ==================
+    // ============ AMBIL DATA SISWA BERDASARKAN SESI ==================
     public function getData(Request $request)
     {
         $today = now()->toDateString();
 
-        // Ambil semua siswa
-        $siswaQuery = Siswa::query();
+        if (!$request->filled('sesi')) {
+            return response()->json([
+                'belum_absen' => [],
+                'sudah_absen' => []
+            ]);
+        }
+
+        $sesi = $request->sesi;
+
+        // Ambil siswa berdasarkan sesi
+        $siswaQuery = Siswa::where('sesi', $sesi);
 
         // Siswa yang sudah absen hari ini
         $absenHariIni = Absensi::whereDate('tanggal', $today)
