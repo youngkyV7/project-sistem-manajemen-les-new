@@ -17,7 +17,7 @@ class DashboardController extends Controller
 {
     // Hitung total siswa dari tabel Siswa
     $totalSiswa = Siswa::where('is_delete', false)->count();
-    
+
     // Ambil semua admin
     $admins = User::role('admin', 'web')->get();
     $totalAdmin = $admins->count();
@@ -41,7 +41,8 @@ public function siswaDashboard(Request $request)
     $sort = $request->get('sort', 'recent');
 
     if ($filter === 'karya') {
-        $query = KaryaSiswa::with('siswa');
+        $query = KaryaSiswa::with('siswa')
+        ->where('is_delete', false);
 
         if ($search) {
             $query->where('judul', 'like', "%$search%");

@@ -8,6 +8,7 @@ use App\Http\Controllers\LaporanController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\QrCodeController;
 use App\Http\Controllers\AbsensiController;
+use App\Http\Controllers\EmbedController;
 
 
 Route::get('/qrcode/{token}', [QrCodeController::class, 'show'])->name('qrcode.show');
@@ -64,6 +65,10 @@ Route::middleware(['role:admin'])->group(function () {
     Route::get('/qrcode/download/{filename}', [QrCodeController::class, 'download'])->name('download.qrcode');
 
     Route::post('/generate-qrcode', [QrCodeController::class, 'generate'])->name('generate.qrcode');
+
+    Route::get('/embed', [EmbedController::class, 'index'])->name('embed.index');
+
+    Route::post('/embed', [EmbedController::class, 'convert'])->name('embed.convert');
 
     // 👩‍💼 Manajemen Admin
     Route::get('/admin', [DashboardController::class, 'showAdmins'])->name('admin.list');
