@@ -16,6 +16,7 @@ class Siswa extends Model
         'nama_siswa',
         'no_hp',
         'pendidikan',
+        'sesi',
         'kelas',
         'alamat',
         'kota',

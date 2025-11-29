@@ -51,66 +51,61 @@
                         <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">No.</th>
                         <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nama</th>
                         <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">No HP</th>
+                        <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Sesi</th>
                         <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
                         <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Waktu Absen</th>
                         <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Aksi</th>
                     </tr>
                 </thead>
                 <tbody class="bg-white divide-y divide-gray-200" id="tableBody">
-    @php
-        $currentDate = null;
-    @endphp
+                @php $currentDate = null; @endphp
+                @forelse ($absensis as $index => $absen)
+                    @php $absenDate = \Carbon\Carbon::parse($absen->waktu_absen)->format('d M Y'); @endphp
 
-    @forelse ($absensis as $index => $absen)
-        @php
-            $absenDate = \Carbon\Carbon::parse($absen->waktu_absen)->format('d M Y');
-        @endphp
+                    @if ($currentDate !== $absenDate)
+                        <tr class="bg-indigo-50">
+                            <td colspan="7" class="px-4 py-2 font-semibold text-indigo-700">
+                                {{ $absenDate }}
+                            </td>
+                        </tr>
+                        @php $currentDate = $absenDate; @endphp
+                    @endif
 
-        {{-- Jika tanggal berganti, tampilkan header tanggal baru --}}
-        @if ($currentDate !== $absenDate)
-            <tr class="bg-indigo-50">
-                <td colspan="6" class="px-4 py-2 font-semibold text-indigo-700">
-                    {{ $absenDate }}
-                </td>
-            </tr>
-            @php $currentDate = $absenDate; @endphp
-        @endif
+                    <tr>
+                        <td class="px-4 py-4 text-sm text-gray-600">{{ $loop->iteration }}</td>
+                        <td class="px-4 py-4 text-sm text-gray-800">{{ $absen->siswa->nama_siswa ?? 'Tidak diketahui' }}</td>
+                        <td class="px-4 py-4 text-sm text-gray-600">{{ $absen->siswa->no_hp ?? '-' }}</td>
+                        <td class="px-4 py-4 text-sm text-gray-600">{{ $absen->sesi }}</td>
+                        <td class="px-4 py-4">
+                            @if ($absen->status === 'Hadir')
+                                <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">
+                                    {{ $absen->status }}
+                                </span>
+                            @else
+                                <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-red-100 text-red-800">
+                                    {{ $absen->status }}
+                                </span>
+                            @endif
+                        </td>
+                        <td class="px-4 py-4 text-sm text-gray-600">
+                            {{ \Carbon\Carbon::parse($absen->waktu_absen)->format('H:i:s') }}
+                        </td>
+                        <td class="px-4 py-4 text-sm flex gap-2">
+                            <button data-id="{{ $absen->id }}" class="view-btn text-indigo-600 hover:text-indigo-900">Lihat</button>
 
-        <tr>
-            <td class="px-4 py-4 text-sm text-gray-600">{{ $loop->iteration }}</td>
-            <td class="px-4 py-4 text-sm text-gray-800">{{ $absen->siswa->nama_siswa ?? 'Tidak diketahui' }}</td>
-            <td class="px-4 py-4 text-sm text-gray-600">{{ $absen->siswa->no_hp ?? '-' }}</td>
-            <td class="px-4 py-4">
-                @if ($absen->status === 'Hadir')
-                    <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">
-                        {{ $absen->status }}
-                    </span>
-                @else
-                    <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-red-100 text-red-800">
-                        {{ $absen->status }}
-                    </span>
-                @endif
-            </td>
-            <td class="px-4 py-4 text-sm text-gray-600">
-                {{ \Carbon\Carbon::parse($absen->waktu_absen)->format('H:i:s') }}
-            </td>
-            <td class="px-4 py-4 text-sm flex gap-2">
-                <button data-id="{{ $absen->id }}" class="view-btn text-indigo-600 hover:text-indigo-900">Lihat</button>
-
-                <form action="{{ route('absensi.delete', $absen->id) }}" method="POST" onsubmit="return confirm('Yakin ingin menghapus absensi ini?');">
-                    @csrf
-                    @method('DELETE')
-                    <button type="submit" class="text-red-600 hover:text-red-900">Hapus</button>
-                </form>
-            </td>
-        </tr>
-    @empty
-        <tr>
-            <td colspan="6" class="px-4 py-4 text-center text-sm text-gray-500">Belum ada data absensi.</td>
-        </tr>
-    @endforelse
-</tbody>
-
+                            <form action="{{ route('absensi.delete', $absen->id) }}" method="POST" onsubmit="return confirm('Yakin ingin menghapus absensi ini?');">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="text-red-600 hover:text-red-900">Hapus</button>
+                            </form>
+                        </td>
+                    </tr>
+                @empty
+                    <tr>
+                        <td colspan="7" class="px-4 py-4 text-center text-sm text-gray-500">Belum ada data absensi.</td>
+                    </tr>
+                @endforelse
+                </tbody>
             </table>
         </div>
 
@@ -124,7 +119,7 @@
     </div>
 </div>
 
-<!-- Modal -->
+<!-- Modal Detail -->
 <div id="detailModal" class="fixed inset-0 bg-black bg-opacity-40 hidden items-center justify-center z-50">
     <div class="bg-white rounded-lg shadow-xl w-11/12 md:w-2/3 lg:w-1/2 overflow-hidden">
         <div class="p-4 border-b flex items-center justify-between">
@@ -172,12 +167,16 @@ document.querySelectorAll('.view-btn').forEach(btn => {
                     <p class="font-medium text-gray-800">${cells[2].innerText}</p>
                 </div>
                 <div>
-                    <p class="text-sm text-gray-500">Status</p>
+                    <p class="text-sm text-gray-500">Sesi</p>
                     <p class="font-medium text-gray-800">${cells[3].innerText}</p>
                 </div>
                 <div>
-                    <p class="text-sm text-gray-500">Waktu Absen</p>
+                    <p class="text-sm text-gray-500">Status</p>
                     <p class="font-medium text-gray-800">${cells[4].innerText}</p>
+                </div>
+                <div>
+                    <p class="text-sm text-gray-500">Waktu Absen</p>
+                    <p class="font-medium text-gray-800">${cells[5].innerText}</p>
                 </div>
             </div>
         `;

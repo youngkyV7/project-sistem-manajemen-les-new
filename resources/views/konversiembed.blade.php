@@ -3,6 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <title>Konversi Embed</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
     <style>
         body {
             font-family: 'Segoe UI', Arial, sans-serif;
@@ -107,7 +109,13 @@
         }
     </style>
 </head>
-<body>
+<body x-data="{ sidebarOpen: true }">
+
+    <!-- Sidebar -->
+    <x-sidebar></x-sidebar>
+
+    <!-- Konten Dashboard -->
+    <div class="transition-all duration-300 pt-20 min-h-screen" :class="sidebarOpen ? 'ml-60' : 'ml-16'">
 
 <div class="container">
 
@@ -139,6 +147,8 @@
     @endisset
 
 </div>
+
+    </div>
 
 </body>
 </html>

@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\QrCodeController;
 use App\Http\Controllers\AbsensiController;
 use App\Http\Controllers\EmbedController;
+use App\Http\Controllers\SesiController;
 
 
 Route::get('/qrcode/{token}', [QrCodeController::class, 'show'])->name('qrcode.show');
@@ -91,18 +92,24 @@ Route::middleware(['role:admin'])->group(function () {
     Route::post('laporan/simpan', [LaporanController::class, 'store'])->name('laporan.store');   // simpan laporan ke DB
     Route::get('laporan/pdf/{id}', [LaporanController::class, 'exportPdf'])->name('laporan.pdf');// export ke PDF
 
+    Route::get('/pilih-sesi', [AbsensiController::class, 'pilihSesi'])->name('absensi.pilih');
     Route::get('/absensi', [AbsensiController::class, 'index'])->name('absensi.index');
     Route::post('/absensi/verify', [AbsensiController::class, 'verify'])->name('absensi.verify');
     Route::get('/absensi/list', [AbsensiController::class, 'list'])->name('absensi.list');
     Route::delete('/absensi/{id}/delete', [AbsensiController::class, 'hapus'])->name('absensi.delete');
     Route::get('/absensi/data', [AbsensiController::class, 'getData'])->name('absensi.data');
+    Route::delete('/absensi/hapus/{id}', [AbsensiController::class, 'hapus'])->name('absensi.hapus');
     //recycle bin
     Route::get('/recyclebin', function () {
     return view('recyclebin');
     })->name('recyclebin');
 
-    Route::put('/siswa/update-sesi/{id}', [SiswaController::class, 'updateSesi'])
-    ->name('siswa.updateSesi');
+    Route::get('/sesi', [SesiController::class, 'index'])->name('sesi.index');
+    Route::post('/sesi', [SesiController::class, 'store'])->name('sesi.store');
+    Route::put('/sesi/{id}', [SesiController::class, 'update'])->name('sesi.update');
+    Route::delete('/sesi/{id}', [SesiController::class, 'destroy'])->name('sesi.destroy');
+
+
 
 });
 

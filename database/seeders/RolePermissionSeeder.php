@@ -26,6 +26,11 @@ class RolePermissionSeeder extends Seeder
         // ✅ Buat beberapa akun admin
         $admins = [
             [
+                'name' => 'admin',
+                'email' => 'admin@gmail.com',
+                'password' => bcrypt('admin'),
+            ],
+            [
                 'name' => 'Brett',
                 'email' => 'brett@brett.com',
                 'password' => bcrypt('sayaBret'),

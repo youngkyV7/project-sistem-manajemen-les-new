@@ -45,7 +45,7 @@
             <span x-show="sidebarOpen" x-transition class="ml-3">Konversi QRCode</span>
         </a>
 
-        <a href="{{ route('absensi.index') }}"
+        <a href="{{ route('absensi.pilih') }}"
             class="flex items-center px-4 py-2 hover:bg-indigo-700 transition rounded-md">
             <svg xmlns="http://www.w3.org/2000/svg" height="18" width="18" fill="white" viewBox="0 0 512 512">
                 <!-- Font Awesome Free Camera Icon -->

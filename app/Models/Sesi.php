@@ -1,25 +1,21 @@
 <?php
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Absensi extends Model
+class Sesi extends Model
 {
     use HasFactory;
 
+    protected $table = 'sesis';
+
     protected $fillable = [
         'siswa_id',
-        'nama',
-        'sesi',
-        'status',
-        'tanggal',
-        'waktu_absen',
+        'nama_sesi'
     ];
 
-    protected $dates = ['tanggal', 'waktu_absen'];
-
-    // Relasi ke siswa
     public function siswa()
     {
         return $this->belongsTo(Siswa::class, 'siswa_id');
