@@ -34,7 +34,7 @@
 
                 <!-- Upload Logo -->
                 <div>
-                    <label class="block text-lg font-medium text-gray-700 mb-2">Upload Logo (Opsional)</label>
+                    <label class="block text-lg font-medium text-gray-700 mb-2">Upload Logo (Jpeg, Jpg, atau PNG)</label>
                     <input type="file" name="logo" accept="image/*" onchange="previewLogo(event)"
                         class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none">
                     <img id="logoPreview" class="hidden mt-3 w-28 h-28 object-cover rounded-lg border" alt="Preview Logo">
@@ -94,6 +94,7 @@
             };
             reader.readAsDataURL(event.target.files[0]);
         }
+    </script>
 
 </body>
 

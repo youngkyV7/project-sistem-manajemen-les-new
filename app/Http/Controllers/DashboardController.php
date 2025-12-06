@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\Siswa;
+use App\Models\LaporanHasilBelajar;
+use App\Models\Absensi;
 use App\Models\KaryaSiswa; // pastikan model karya siswa ada
 
 class DashboardController extends Controller
@@ -18,14 +20,19 @@ class DashboardController extends Controller
     // Hitung total siswa dari tabel Siswa
     $totalSiswa = Siswa::where('is_delete', false)->count();
 
+    $totallaporan = LaporanHasilBelajar::count();
+
     // Ambil semua admin
     $admins = User::role('admin', 'web')->get();
+
+    $totalAbsensi = Absensi::count();
+
     $totalAdmin = $admins->count();
 
     // Hitung total karya siswa
     $karyaSiswa = KaryaSiswa::where('is_delete', false)->count();
 
-    return view('admindashboard', compact('totalSiswa', 'totalAdmin', 'karyaSiswa', 'admins'));
+    return view('admindashboard', compact('totalSiswa', 'totalAdmin', 'karyaSiswa', 'admins', 'totallaporan', 'totalAbsensi'));
 
 }
 public function showAdmins()

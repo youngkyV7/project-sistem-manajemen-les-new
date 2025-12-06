@@ -32,42 +32,42 @@ class AbsensiController extends Controller
     //  AMBIL DATA SISWA (BELUM & SUDAH ABSEN)
     // ============================================================
     public function getData(Request $request)
-{
-    $today = now()->toDateString();
+    {
+        $today = now()->toDateString();
 
-    if (!$request->filled('sesi')) {
+        if (!$request->filled('sesi')) {
+            return response()->json([
+                'belum_absen' => [],
+                'sudah_absen' => []
+            ]);
+        }
+
+        $sesi = $request->sesi;
+
+        // query siswa sesuai sesi
+        $siswaQuery = Siswa::where('sesi', $sesi);
+
+        // ambil ID siswa yang sudah absen hari ini di sesi tersebut
+        $absenHariIni = Absensi::whereDate('tanggal', $today)
+            ->where('sesi', $sesi)
+            ->pluck('siswa_id')
+            ->toArray();
+
+        // siswa belum absen
+        $siswaBelumAbsen = (clone $siswaQuery)
+            ->whereNotIn('id', $absenHariIni)
+            ->get(['id', 'nama_siswa']);
+
+        // siswa sudah absen
+        $siswaSudahAbsen = (clone $siswaQuery)
+            ->whereIn('id', $absenHariIni)
+            ->get(['id', 'nama_siswa']);
+
         return response()->json([
-            'belum_absen' => [],
-            'sudah_absen' => []
+            'belum_absen' => $siswaBelumAbsen,
+            'sudah_absen' => $siswaSudahAbsen,
         ]);
     }
-
-    $sesi = $request->sesi;
-
-    // query siswa sesuai sesi
-    $siswaQuery = Siswa::where('sesi', $sesi);
-
-    // ambil ID siswa yang sudah absen hari ini di sesi tersebut
-    $absenHariIni = Absensi::whereDate('tanggal', $today)
-        ->where('sesi', $sesi)
-        ->pluck('siswa_id')
-        ->toArray();
-
-    // siswa belum absen
-    $siswaBelumAbsen = (clone $siswaQuery)
-        ->whereNotIn('id', $absenHariIni)
-        ->get(['id', 'nama_siswa']);
-
-    // siswa sudah absen
-    $siswaSudahAbsen = (clone $siswaQuery)
-        ->whereIn('id', $absenHariIni)
-        ->get(['id', 'nama_siswa']);
-
-    return response()->json([
-        'belum_absen' => $siswaBelumAbsen,
-        'sudah_absen' => $siswaSudahAbsen,
-    ]);
-}
 
 
 
@@ -200,5 +200,9 @@ class AbsensiController extends Controller
             return redirect()->route('absensi.list')
                 ->with('error', 'Gagal menghapus absensi: ' . $e->getMessage());
         }
+    }
+    public function totalAbsensi()
+    {
+        return Absensi::count();
     }
 }

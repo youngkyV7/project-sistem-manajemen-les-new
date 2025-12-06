@@ -113,7 +113,7 @@ class SiswaController extends Controller
         $logoHeight = imagesy($logo);
 
         // Skala logo jadi 20% lebar QR
-        $logoQRWidth = $qrWidth * 0.2;
+        $logoQRWidth = $qrWidth * 0.50;
         $scale = $logoQRWidth / $logoWidth;
         $logoQRHeight = $logoHeight * $scale;
 
